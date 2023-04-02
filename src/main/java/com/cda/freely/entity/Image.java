@@ -1,9 +1,16 @@
 package com.cda.freely.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "image")
 public class Image {
@@ -29,34 +36,6 @@ public class Image {
         this.id_achieve = id_achieve;
     }
 
-    public Image(Long id_image, String url, Achievement id_achieve) {
-        this.id_image = id_image;
-        this.url = url;
-        this.id_achieve = id_achieve;
-    }
-
-    public Image() {
-
-    }
-
-    public Long getId() {
-
-        return id_image;
-    }
-
-    public void setId(Long id) {
-
-        this.id_image = id;
-    }
-    public String getUrl() {
-
-        return url;
-    }
-
-    public void setUrl(String url) {
-
-        this.url = url;
-    }
 
 
 }

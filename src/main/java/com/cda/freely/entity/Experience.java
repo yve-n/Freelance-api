@@ -2,11 +2,18 @@ package com.cda.freely.entity;
 
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "experience")
 public class Experience {
@@ -38,63 +45,13 @@ public class Experience {
     @JoinColumn(name = "id_user")
     private User id_user;
 
-    public Experience() {
-    }
 
-    public Experience(Long id, String title, String description, Date started_at, Date ended_at, User id_user) {
-        this.id_experience = id;
-        this.title = title;
-        this.description = description;
-        this.started_at = started_at;
-        this.ended_at = ended_at;
-        this.id_user = id_user;
-    }
     public User getId_user() {
         return id_user;
     }
 
     public void setId_user(User id_user) {
         this.id_user = id_user;
-    }
-
-    public Date getEnded_at() {
-        return ended_at;
-    }
-
-    public void setEnded_at(Date ended_at) {
-        this.ended_at = ended_at;
-    }
-
-    public Date getStarted_at() {
-        return started_at;
-    }
-
-    public void setStarted_at(Date started_at) {
-        this.started_at = started_at;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Long getId() {
-        return id_experience;
-    }
-
-    public void setId(Long id) {
-        this.id_experience = id;
     }
 
 }

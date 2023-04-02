@@ -1,11 +1,18 @@
 package com.cda.freely.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "history")
 public class History {
@@ -28,44 +35,12 @@ public class History {
     @JoinColumn(name = "id_user")
     private User id_user;
 
-    public History() {
-    }
-
-    public History(Long id_history, String description, Date created_at, User id_user) {
-        this.id_history = id_history;
-        this.description = description;
-        this.created_at = created_at;
-        this.id_user = id_user;
-    }
     public User getId_user() {
         return id_user;
     }
 
     public void setId_user(User id_user) {
         this.id_user = id_user;
-    }
-    public Date getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Long getId() {
-        return id_history;
-    }
-
-    public void setId(Long id) {
-        this.id_history = id;
     }
 
 }

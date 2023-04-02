@@ -1,11 +1,18 @@
 package com.cda.freely.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.*;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "family")
 public class Family {
@@ -41,27 +48,5 @@ public class Family {
         this.users = users;
     }
 
-    public Family() {
-    }
-
-    public Family(Long id, String name) {
-        this.id_family = id;
-        this.name = name;
-    }
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id_family;
-    }
-
-    public void setId(Long id) {
-        this.id_family = id;
-    }
 
 }

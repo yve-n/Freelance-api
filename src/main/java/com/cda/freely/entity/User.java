@@ -1,16 +1,28 @@
 package com.cda.freely.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class User {
+public class User  implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user", nullable = false)
@@ -42,16 +54,23 @@ public class User {
     private Date created_at;
 
     @Column(name = "role", length = 10,nullable = false)
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role ;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Column(name = "user_account_state")
+    @JdbcTypeCode(SqlTypes.TINYINT)
+    private Integer user_account_state;
+
+    @Column(name = "user_availability")
+    @JdbcTypeCode(SqlTypes.TINYINT)
+    private Integer user_availability;
+
     @ManyToOne
     @JoinColumn(name = "id_family")
     private Family id_family;
-
 
 
     @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
@@ -76,30 +95,53 @@ public class User {
     private List<Skill> skills = new ArrayList<>();
     @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Training> trainings = new ArrayList<>();
-    @ManyToOne
-    @JoinColumn(name = "id_status")
-    private Status id_status;
-    public User() {
-    }
-    public User(Long id, String first_name, String last_name, String email, String password, String profile_pic, Date created_at, String role, Gender gender, Family id_family) {
-        this.id_user = id;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.email = email;
-        this.password = password;
-        this.profile_pic = profile_pic;
-        this.created_at = created_at;
-        this.role = role;
-        this.gender = gender;
-        this.id_family = id_family;
+
+    @ManyToMany(mappedBy = "users")
+    private Collection<UserCategory> userCategories = new ArrayList<>();
+
+    public Collection<UserCategory> getUserCategories() {
+        return userCategories;
     }
 
-    public Status getId_status() {
-        return id_status;
+    public void setUserCategories(Collection<UserCategory> userCategories) {
+        this.userCategories = userCategories;
     }
 
-    public void setId_status(Status id_status) {
-        this.id_status = id_status;
+
+    // return a list of role
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public List<Training> getTrainings() {
@@ -173,69 +215,6 @@ public class User {
     public void setId_family(Family id_family) {
         this.id_family = id_family;
     }
-    public Long getId() {
 
-        return id_user;
-    }
-    public void setId(Long id) {
-
-        this.id_user = id;
-    }
-    public Date getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
-    }
-
-    public String getProfile_pic() {
-        return profile_pic;
-    }
-
-    public void setProfile_pic(String profile_pic) {
-        this.profile_pic = profile_pic;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getLast_name() {
-        return last_name;
-    }
-
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
-    }
-
-    public String getFirst_name() {
-        return first_name;
-    }
-
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
-    }
-
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
 }

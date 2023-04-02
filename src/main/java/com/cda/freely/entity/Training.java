@@ -1,9 +1,16 @@
 package com.cda.freely.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "training")
 public class Training {
@@ -28,17 +35,6 @@ public class Training {
     @JoinColumn(name = "id_user")
     private User id_user;
 
-    public Training() {
-    }
-
-    public Training(Integer id, String title, String description, String year, User id_user) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.year = year;
-        this.id_user = id_user;
-    }
-
     public User getId_user() {
         return id_user;
     }
@@ -47,36 +43,5 @@ public class Training {
         this.id_user = id_user;
     }
 
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
 }

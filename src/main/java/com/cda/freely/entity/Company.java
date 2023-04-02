@@ -1,13 +1,20 @@
 package com.cda.freely.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "company")
 public class Company {
@@ -48,17 +55,10 @@ public class Company {
     @OneToMany(mappedBy = "id_company", orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "id_status")
-    private Status id_status;
+    @Column(name = "company_state")
+    @JdbcTypeCode(SqlTypes.TINYINT)
+    private Integer company_state;
 
-    public Status getId_status() {
-        return id_status;
-    }
-
-    public void setId_status(Status id_status) {
-        this.id_status = id_status;
-    }
 
     public List<Address> getAddresses() {
         return addresses;
@@ -68,19 +68,6 @@ public class Company {
         this.addresses = addresses;
     }
 
-    public Company() {
-    }
-
-    public Company(Long id_company, String name, String siret, String siren, String number, String logo, Boolean tva, User id_user) {
-        this.id_company = id_company;
-        this.name = name;
-        this.siret = siret;
-        this.siren = siren;
-        this.number = number;
-        this.logo = logo;
-        this.tva = tva;
-        this.id_user = id_user;
-    }
     public User getId_user() {
         return id_user;
     }
@@ -89,62 +76,7 @@ public class Company {
         this.id_user = id_user;
     }
 
-    public Boolean getTva() {
-        return tva;
-    }
 
-    public void setTva(Boolean tva) {
-        this.tva = tva;
-    }
 
-    public String getLogo() {
-        return logo;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getSiren() {
-        return siren;
-    }
-
-    public void setSiren(String siren) {
-        this.siren = siren;
-    }
-
-    public String getSiret() {
-        return siret;
-    }
-
-    public void setSiret(String siret) {
-        this.siret = siret;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-
-        return id_company;
-    }
-
-    public void setId(Long id) {
-
-        this.id_company = id;
-    }
 
 }

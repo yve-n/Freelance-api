@@ -1,9 +1,20 @@
 package com.cda.freely.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "category")
 public class Category {
@@ -20,13 +31,15 @@ public class Category {
     @JoinColumn(name = "id_family")
     private Family id_family;
 
-    public Category() {
+    @ManyToMany(mappedBy = "categories")
+    private Collection<UserCategory> userCategories = new ArrayList<>();
+
+    public Collection<UserCategory> getUserCategories() {
+        return userCategories;
     }
 
-    public Category(Long id, String name, Family id_family) {
-        this.id_category = id;
-        this.name = name;
-        this.id_family = id_family;
+    public void setUserCategories(Collection<UserCategory> userCategories) {
+        this.userCategories = userCategories;
     }
 
     public Family getId_family() {
@@ -36,20 +49,6 @@ public class Category {
     public void setId_family(Family id_family) {
         this.id_family = id_family;
     }
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id_category;
-    }
-
-    public void setId(Long id) {
-        this.id_category = id;
-    }
 
 }
