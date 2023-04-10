@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 @Builder
@@ -21,7 +22,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_category", nullable = false)
-    private Long id_category;
+    private Long id;
 
     @Column(name = "name", length = 100, nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -29,25 +30,17 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "id_family")
-    private Family id_family;
+    private Family family;
 
-    @ManyToMany(mappedBy = "categories")
-    private Collection<UserCategory> userCategories = new ArrayList<>();
+    @OneToMany(mappedBy = "category")
+    private List<UserCategory> userCategories = new ArrayList<>();
 
-    public Collection<UserCategory> getUserCategories() {
-        return userCategories;
+    public Family getFamily() {
+        return family;
     }
 
-    public void setUserCategories(Collection<UserCategory> userCategories) {
-        this.userCategories = userCategories;
-    }
-
-    public Family getId_family() {
-        return id_family;
-    }
-
-    public void setId_family(Family id_family) {
-        this.id_family = id_family;
+    public void setFamily(Family family) {
+        this.family = family;
     }
 
 

@@ -1,5 +1,6 @@
 package com.cda.freely.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,17 +20,18 @@ public class Family {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_family", nullable = false)
-    private Long id_family;
+    private Long id;
 
 
     @Column(name = "name", length = 100,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private String name;
 
-    @OneToMany(mappedBy = "id_family", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "family", orphanRemoval = true)
+    @JsonIgnore
     private List<User> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id_family", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "family", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();
 
     public List<Category> getCategories() {

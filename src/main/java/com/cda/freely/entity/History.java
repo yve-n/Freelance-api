@@ -19,7 +19,7 @@ public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_history", nullable = false)
-    private Long id_history;
+    private Long id;
 
     @Lob
     @Column(name = "description",nullable = false)
@@ -29,18 +29,18 @@ public class History {
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at",nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
-    private Date created_at;
+    private Date createdAt;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User id_user;
+    private User user;
 
-    public User getId_user() {
-        return id_user;
+    public User getUser() {
+        return user;
     }
 
-    public void setId_user(User id_user) {
-        this.id_user = id_user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

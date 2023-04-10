@@ -17,7 +17,7 @@ public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_service", nullable = false)
-    private Long id_service;
+    private Long id;
     @Column(name = "price")
     @JdbcTypeCode(SqlTypes.FLOAT)
     private Float price;
@@ -28,14 +28,14 @@ public class Service {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User id_user;
+    private User user;
 
-    public User getId_user() {
-        return id_user;
+    public User getUser() {
+        return user;
     }
 
-    public void setId_user(User id_user) {
-        this.id_user = id_user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,12 +17,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "company")
 public class Company {
+    public enum Status {
+        ACTIVE, INACTIVE
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_company", nullable = false)
-    private Long id_company;
+    private Long id;
 
     @Column(name = "name", length = 50,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -49,15 +54,15 @@ public class Company {
 
     @ManyToOne
     @JoinColumn(name = "id_user",nullable = false)
-    private User id_user;
+    private User user;
 
 
-    @OneToMany(mappedBy = "id_company", orphanRemoval = true)
+    @OneToMany(mappedBy = "id", orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
     @Column(name = "company_state")
-    @JdbcTypeCode(SqlTypes.TINYINT)
-    private Integer company_state;
+    @Enumerated(EnumType.STRING)
+    private Status companyState;
 
 
     public List<Address> getAddresses() {
@@ -68,12 +73,12 @@ public class Company {
         this.addresses = addresses;
     }
 
-    public User getId_user() {
-        return id_user;
+    public User getUser() {
+        return user;
     }
 
-    public void setId_user(User id_user) {
-        this.id_user = id_user;
+    public void setUser(User id_user) {
+        this.user = user;
     }
 
 

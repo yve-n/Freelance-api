@@ -20,7 +20,7 @@ public class Experience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_experience", nullable = false)
-    private Long id_experience;
+    private Long id;
 
     @Column(name = "title", length = 100,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -34,24 +34,24 @@ public class Experience {
     @Temporal(TemporalType.DATE)
     @Column(name = "started_at", nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
-    private Date started_at;
+    private Date startedAt;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "ended_at",nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
-    private Date ended_at;
+    private Date endedAt;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User id_user;
+    private User user;
 
 
-    public User getId_user() {
-        return id_user;
+    public User getUser() {
+        return user;
     }
 
-    public void setId_user(User id_user) {
-        this.id_user = id_user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

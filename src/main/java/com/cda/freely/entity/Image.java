@@ -17,7 +17,7 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_image", nullable = false)
-    private Long id_image;
+    private Long id;
 
 
     @Column(name = "url", nullable = false)
@@ -26,14 +26,14 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(name = "id_achieve", nullable = false)
-    private Achievement id_achieve;
+    private Achievement achieve;
 
-    public Achievement getId_achieve() {
-        return id_achieve;
+    public Achievement getAchieve() {
+        return achieve;
     }
 
-    public void setId_achieve(Achievement id_achieve) {
-        this.id_achieve = id_achieve;
+    public void setAchieve(Achievement achieve) {
+        this.achieve = achieve;
     }
 
 

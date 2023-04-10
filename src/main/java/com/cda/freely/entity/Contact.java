@@ -19,7 +19,7 @@ public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_contact", nullable = false)
-    private Long id_contact;
+    private Long id;
 
     @Column(name = "name", length = 50,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -41,18 +41,18 @@ public class Contact {
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at")
     @JdbcTypeCode(SqlTypes.DATE)
-    private Date created_at;
+    private Date createdAt;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User id_user;
+    private User user;
 
-    public User getId_user() {
-        return id_user;
+    public User getUser() {
+        return user;
     }
 
-    public void setId_user(User id_user) {
-        this.id_user = id_user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 

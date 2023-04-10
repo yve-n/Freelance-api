@@ -17,7 +17,7 @@ public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_skill", nullable = false)
-    private Long id_skill;
+    private Long id;
 
     @Column(name = "name", length = 40,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -29,15 +29,15 @@ public class Skill {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User id_user;
+    private User user;
 
 
-    public User getId_user() {
-        return id_user;
+    public User getUser() {
+        return user;
     }
 
-    public void setId_user(User id_user) {
-        this.id_user = id_user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 

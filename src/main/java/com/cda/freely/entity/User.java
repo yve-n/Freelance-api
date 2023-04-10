@@ -7,9 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,11 +19,25 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class User  implements UserDetails {
+public class User {
+    public enum Status {
+        PENDING, APPROVED, DECLINED,DELETE
+    }
+    public enum Availability {
+        YES, NO
+    }
+    public enum Role {
+        USER,
+        ADMIN
+    }
+    public enum Gender {
+        MALE,
+        FEMALE
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user", nullable = false)
-    private Long id_user;
+    private Long id;
 
     @Column(name = "first_name", length = 32,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -51,98 +62,52 @@ public class User  implements UserDetails {
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at",nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
-    private Date created_at;
+    private Date createdAt;
 
     @Column(name = "role", length = 10,nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserRole role ;
+    private Role role ;
 
+    @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "user_account_state")
-    @JdbcTypeCode(SqlTypes.TINYINT)
-    private Integer user_account_state;
+    @Column(name = "user_account_state", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status userAccountState;
 
     @Column(name = "user_availability")
-    @JdbcTypeCode(SqlTypes.TINYINT)
-    private Integer user_availability;
+    @Enumerated(EnumType.STRING)
+    private Availability userAvailability;
 
     @ManyToOne
     @JoinColumn(name = "id_family")
-    private Family id_family;
+    private Family family;
+    @OneToMany(mappedBy = "user")
+    private List<UserCategory> userCategories = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Achievement> achievements = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Company> companies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Contact> contacts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Experience> experiences = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<History> histories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Service> services = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Skill> skills = new ArrayList<>();
-    @OneToMany(mappedBy = "id_user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Training> trainings = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "users")
-    private Collection<UserCategory> userCategories = new ArrayList<>();
-
-    public Collection<UserCategory> getUserCategories() {
-        return userCategories;
-    }
-
-    public void setUserCategories(Collection<UserCategory> userCategories) {
-        this.userCategories = userCategories;
-    }
-
-
-    // return a list of role
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     public List<Training> getTrainings() {
         return trainings;
@@ -208,12 +173,12 @@ public class User  implements UserDetails {
         this.achievements = achievements;
     }
 
-    public Family getId_family() {
-        return id_family;
+    public Family getFamily() {
+        return family;
     }
 
-    public void setId_family(Family id_family) {
-        this.id_family = id_family;
+    public void setFamily(Family family) {
+        this.family = family;
     }
 
 

@@ -16,7 +16,7 @@ import org.hibernate.type.SqlTypes;
 public class Training {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id_training", nullable = false)
     private Integer id;
 
     @Column(name = "title", length = 100,nullable = false)
@@ -33,14 +33,14 @@ public class Training {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User id_user;
+    private User user;
 
-    public User getId_user() {
-        return id_user;
+    public User getUser() {
+        return user;
     }
 
-    public void setId_user(User id_user) {
-        this.id_user = id_user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 

@@ -40,13 +40,13 @@ public class Achievement {
     @Temporal(TemporalType.DATE)
     @Column(name = "achieve_date" , nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
-    private Date achieve_date;
+    private Date achieveDate;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User id_user;
+    private User user;
 
-    @OneToMany(mappedBy = "id_achieve", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "achieve", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
     public List<Image> getImages() {
@@ -57,12 +57,12 @@ public class Achievement {
         this.images = images;
     }
 
-    public User getId_user() {
-        return id_user;
+    public User getUser() {
+        return user;
     }
 
-    public void setId_user(User id_user) {
-        this.id_user = id_user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 
