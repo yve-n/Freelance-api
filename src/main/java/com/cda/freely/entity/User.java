@@ -1,6 +1,8 @@
 package com.cda.freely.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,8 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -38,26 +40,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user", nullable = false)
     private Long id;
-
     @Column(name = "first_name", length = 32,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private String first_name;
+    private String firstName;
 
-    @Column(name = "last_name", length = 32,nullable = false)
+    @Column(name = "lastName", length = 32,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private String last_name;
+    private String lastName;
 
     @Column(name = "email", unique = true,length = 50,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private String email;
 
-    @Column(name = "password", length = 50,nullable = false)
+    @Column(name = "password",nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private String password;
 
     @Column(name = "profile_pic")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private String profile_pic;
+    private String profilePic;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at",nullable = false)
@@ -66,7 +67,7 @@ public class User {
 
     @Column(name = "role", length = 10,nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role ;
+    private Role role;
 
     @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -80,6 +81,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Availability userAvailability;
 
+    @Column(name = "token_number")
+    private int tokenNumber;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "users"})
     @ManyToOne
     @JoinColumn(name = "id_family")
     private Family family;

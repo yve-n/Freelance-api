@@ -1,4 +1,4 @@
-package com.cda.freely.service;
+package com.cda.freely.service.auth;
 
 import com.cda.freely.entity.User;
 import com.cda.freely.repository.UserRepository;
@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class AuthService {
     @Autowired
     UserRepository userRepository;
 
-    public User createUser(User user) {
+    public User saveUser(User user) {
         return userRepository.save(user);
     }
 
@@ -20,7 +20,8 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public boolean emailExists(String email) {
-        return true;
-    }
+    public Optional<User> findById(Long id){ return userRepository.findById(id);}
+
+    public Optional<User> findByMail(String email){ return Optional.ofNullable(userRepository.findByEmail(email));}
+
 }

@@ -1,5 +1,7 @@
 package com.cda.freely.config;
 
+import com.cda.freely.entity.User;
+import com.cda.freely.exception.CustomAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Collections;
@@ -22,7 +25,7 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -33,6 +36,9 @@ public class SecurityConfig {
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler(){return new CustomAccessDeniedHandler();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,25 +46,29 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/")
-                .permitAll()
-                .requestMatchers("/register")
-                .permitAll()
-                .requestMatchers("/login")
-                .permitAll()
-                .requestMatchers(req -> req.getServletPath().startsWith("/api/admin/")).hasRole("ADMIN")
-                .requestMatchers(req -> req.getServletPath().startsWith("/api/user/")).hasAnyRole("USER", "ADMIN")
-                .anyRequest()
-                .authenticated()
+                .requestMatchers("/").permitAll()
+//                .requestMatchers("/auth")
+//                .permitAll()
+                .requestMatchers("/auth/register").permitAll()
+                .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/auth/test").hasRole("ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/user").hasRole("USER")
+                .requestMatchers("/user/**").hasRole("USER")
+//                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
+//                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-            return http.build();
+
+        return http.build();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -69,12 +79,12 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailsServiceImpl();
+        return userDetailsServiceImpl;
     }
+
     @Bean
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(Collections.singletonList(authenticationProvider()));
     }
-
 
 }

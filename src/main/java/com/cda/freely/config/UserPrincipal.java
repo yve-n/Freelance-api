@@ -7,6 +7,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+
+/**
+ * UserPrincipal permet de définir un User comme un UserDetails reconnaissable par spring security
+ */
 
 public class UserPrincipal implements UserDetails {
 
@@ -15,6 +20,11 @@ public class UserPrincipal implements UserDetails {
     public UserPrincipal(User user) {
         this.user = user;
     }
+
+    /**
+     *
+     * @return liste de rôles
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
@@ -31,6 +41,10 @@ public class UserPrincipal implements UserDetails {
     public String getUsername() {
 
         return user.getEmail();
+    }
+
+    public Integer getTokenNumber(){
+        return user.getTokenNumber();
     }
 
     @Override

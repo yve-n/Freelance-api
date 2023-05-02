@@ -1,9 +1,12 @@
 package com.cda.freely.controller.auth;
 
+import com.cda.freely.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 
 @Data
 @Builder
@@ -12,6 +15,16 @@ import lombok.NoArgsConstructor;
 public class JwtAuthenticationResponse {
     private String accessToken;
     private String tokenType = "Bearer";
+
+    public Optional<User> getUser() {
+        return user;
+    }
+
+    public void setUser(Optional<User> user) {
+        this.user = user;
+    }
+
+    private Optional<User> user ;
 
     public JwtAuthenticationResponse(String accessToken) {
         this.accessToken = accessToken;

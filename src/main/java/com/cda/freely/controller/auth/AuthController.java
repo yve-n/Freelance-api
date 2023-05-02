@@ -1,98 +1,154 @@
 package com.cda.freely.controller.auth;
 
 import com.cda.freely.config.JwtTokenProvider;
+import com.cda.freely.config.UserDetailsServiceImpl;
+import com.cda.freely.config.UserPrincipal;
+import com.cda.freely.entity.Family;
 import com.cda.freely.entity.User;
+import com.cda.freely.exception.GlobalExceptionHandler;
 import com.cda.freely.service.EmailService;
-import com.cda.freely.service.UserService;
+import com.cda.freely.service.FamilyService;
+import com.cda.freely.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.util.Optional;
+
 @RestController
-//@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-    @Autowired
-    private EmailService emailService;
-    private final PasswordEncoder passwordEncoder;
-    @Autowired
-    private UserService userService;
 
-    @GetMapping("/")
-    public String home(){
+    /**
+     * Autowired permet de réaliser une injection de dépendance
+     */
+    private AuthenticationManager authenticationManager;
+    private JwtTokenProvider tokenProvider;
+    private EmailService emailService;
+    private PasswordEncoder passwordEncoder;
+    private AuthService authService;
+    private FamilyService familyService;
+    private UserDetailsServiceImpl userDetailsService;
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+
+
+    /**
+     * Injection de dépendance par Constructeur.
+     * tous les params du construct sont des dépendances.
+     */
+    @Autowired
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            JwtTokenProvider tokenProvider,
+            EmailService emailService,
+            PasswordEncoder passwordEncoder,
+            AuthService authService,
+            FamilyService familyService,
+            UserDetailsServiceImpl userDetailsService) {
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
+        this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
+        this.authService = authService;
+        this.familyService = familyService;
+        this.userDetailsService = userDetailsService;
+    }
+
+    @GetMapping("")
+    public String home() {
         return "hello world";
     }
 
-    @GetMapping("test")
-    public String test(){
+    @GetMapping("/test")
+    public String test() {
         return "hello test";
     }
 
-    @PostMapping("login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
-    }
-
-    @PostMapping("register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
-        // Vérifiez si l'e-mail est déjà enregistré
-
-        String userEmail = String.valueOf(userService.findByEmail(request.getEmail()));
-        if (userEmail != null) {
-            RegistrationResponse response = new RegistrationResponse();
-            response.setMessage("Email already exists");
-            return ResponseEntity.badRequest().body(response);
-        } else {
-
-            // Créez un nouvel utilisateur à partir de la demande d'enregistrement
-            User.Gender gender = null;
-            if (request.getGender().equalsIgnoreCase("M")) {
-                gender = gender.MALE;
-            } else if (request.getGender().equalsIgnoreCase("F")) {
-                gender = gender.FEMALE;
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody User user){
+        logger.info("user", user);
+        logger.info("Authenticating user: {}", user.getEmail(), user.getPassword());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            user.getEmail(),
+                            user.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = tokenProvider.generateToken(authentication);
+            try{
+                Optional<User> foundUser = authService.findByMail(user.getEmail());
+                JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse(jwt);
+                jwtAuthenticationResponse.setUser(foundUser);
+                return ResponseEntity.ok(jwtAuthenticationResponse);
+            }catch(Exception e){
+                return new GlobalExceptionHandler().handleAllExceptions(e);
             }
 
-            var user = User.builder()
-                    .first_name(request.getFirst_name())
-                    .last_name(request.getLast_name())
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(request.getPassword()))
-                    .role(User.Role.USER)
-                    .gender(gender)
-                    .user_account_state(User.Status.PENDING)
-                    .user_availability(User.Availability.YES)
-                    .build();
-            userService.createUser(user);
+        } catch (Exception e) {
+            logger.error("Authentication failed for user: {}", user.getEmail(), e);
+            logger.error("error", e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(),e.getCause().getCause().getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 
-            // envoyez un e-mail d'activation
-            String subject = "Nouvel utilisateur en attente d'approbation";
-            String message = String.format("L'utilisateur %s (%s) s'est inscrit et attend l'approbation.", user.getFirst_name(), user.getEmail());
-            emailService.sendEmail(user.getEmail(), subject, message);
-
-            // Créez une réponse JSON pour informer l'utilisateur que son compte a été créé avec succès et qu'il doit activer son compte.
-            RegistrationResponse response = new RegistrationResponse("User registered successfully. Please check your email to activate your account.", user);
-            return ResponseEntity.ok(response);
         }
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        // Vérifiez si l'e-mail est déjà enregistré
+        ErrorResponse errorResponse = new ErrorResponse();
+        try {
+            Optional<User> ExistUser = authService.findByMail(user.getEmail());
+            if (ExistUser.isPresent()) {
+                errorResponse.setMessage("Email already exists");
+                return ResponseEntity.badRequest().body(errorResponse);
+            } else {
+                // Créez un nouvel utilisateur à partir de la demande d'enregistrement
+                Optional<Family> family = familyService.findById(user.getFamily().getId());
+                family.ifPresent(user::setFamily);
+                var newUser = User.builder()
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .email(user.getEmail())
+                        .password(passwordEncoder.encode(user.getPassword()))
+                        .gender(user.getGender())
+                        .role(User.Role.USER)
+                        .userAccountState(User.Status.PENDING)
+                        .userAvailability(User.Availability.YES)
+                        .createdAt(new Date())
+                        .family(user.getFamily())
+                        .build();
+                authService.saveUser(newUser);
 
+                // envoyez un e-mail d'activation
+                try{
+                    String subject = "Bienvenue sur Freely";
+                    String message = "Votre compte est actuellement en attente de validation. Vous recevrez " +
+                            "un email lorsque celui ci sera validé." +
+                            newUser.getFirstName() +  newUser.getEmail();
+                    emailService.sendEmail(newUser.getEmail(), subject, message);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+                }catch(Exception e){
+                    return new GlobalExceptionHandler().handleAllExceptions(e);
+                }
+            }
+        } catch (Exception e) {
+            errorResponse.setMessage(e.getMessage());
+            errorResponse.setDetails(e.getCause().getCause().getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
 }
