@@ -125,7 +125,7 @@ public class AuthController {
                         .email(user.getEmail())
                         .password(passwordEncoder.encode(user.getPassword()))
                         .gender(user.getGender())
-                        .role(User.Role.USER)
+                        .role(User.Role.ROLE_USER)
                         .userAccountState(User.Status.PENDING)
                         .userAvailability(User.Availability.YES)
                         .createdAt(new Date())

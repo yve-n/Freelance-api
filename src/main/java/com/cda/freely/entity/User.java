@@ -28,10 +28,12 @@ public class User {
     public enum Availability {
         YES, NO
     }
+
     public enum Role {
-        USER,
-        ADMIN
+        ROLE_USER,
+        ROLE_ADMIN
     }
+
     public enum Gender {
         MALE,
         FEMALE
