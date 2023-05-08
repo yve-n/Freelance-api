@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 @Data
 @Builder
@@ -45,6 +47,16 @@ public class Experience {
     @JoinColumn(name = "id_user")
     private User user;
 
+    @OneToMany(mappedBy = "experience", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    private Collection<Achievement> achievements = new ArrayList<>();
+
+    public Collection<Achievement> getAchievements() {
+        return achievements;
+    }
+
+    public void setAchievements(Collection<Achievement> achievements) {
+        this.achievements = achievements;
+    }
 
     public User getUser() {
         return user;

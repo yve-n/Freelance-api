@@ -90,10 +90,7 @@ public class User {
     @JoinColumn(name = "id_family")
     private Family family;
     @OneToMany(mappedBy = "user")
-    private List<UserCategory> userCategories = new ArrayList<>();
-
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
-    private List<Achievement> achievements = new ArrayList<>();
+    private List<UserTag> userTags = new ArrayList<>();
 
     @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Company> companies = new ArrayList<>();
@@ -169,14 +166,6 @@ public class User {
 
     public void setCompanies(List<Company> companies) {
         this.companies = companies;
-    }
-
-    public List<Achievement> getAchievements() {
-        return achievements;
-    }
-
-    public void setAchievements(List<Achievement> achievements) {
-        this.achievements = achievements;
     }
 
     public Family getFamily() {

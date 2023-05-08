@@ -49,6 +49,18 @@ public class Achievement {
     @OneToMany(mappedBy = "achieve", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "id_experience")
+    private Experience experience;
+
+    public Experience getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Experience experience) {
+        this.experience = experience;
+    }
+
     public List<Image> getImages() {
         return images;
     }

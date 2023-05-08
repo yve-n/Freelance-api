@@ -11,7 +11,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
@@ -20,10 +19,10 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "category")
-public class Category {
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_category", nullable = false)
+    @Column(name = "id_tag", nullable = false)
     private Long id;
 
     @Column(name = "name", length = 100, nullable = false)
@@ -34,8 +33,8 @@ public class Category {
     @JoinColumn(name = "id_family")
     private Family family;
 
-    @OneToMany(mappedBy = "category")
-    private List<UserCategory> userCategories = new ArrayList<>();
+    @OneToMany(mappedBy = "tag")
+    private List<UserTag> userCategories = new ArrayList<>();
 
     public Family getFamily() {
         return family;
