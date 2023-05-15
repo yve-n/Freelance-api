@@ -14,7 +14,7 @@
 	<name>Freely</name>
 	<description>Freelance application project made with  for Spring Boot</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>19</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -97,8 +97,6 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>8.0.0.Final</version>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>
