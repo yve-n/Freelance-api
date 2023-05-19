@@ -56,6 +56,8 @@ public class SecurityConfig {
 //                .requestMatchers("/auth")
 //                .permitAll()
                 .requestMatchers("/auth/register").permitAll()
+                .requestMatchers("/auth/register/step1").permitAll()
+                .requestMatchers("/auth/register/step2").permitAll()
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/auth/test").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
