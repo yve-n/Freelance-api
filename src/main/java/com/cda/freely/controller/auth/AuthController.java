@@ -4,6 +4,7 @@ import com.cda.freely.config.JwtTokenProvider;
 import com.cda.freely.config.UserDetailsServiceImpl;
 import com.cda.freely.controller.auth.externalApiData.ExternalApiResponseToJson;
 import com.cda.freely.controller.auth.externalApiData.PeriodeUniteLegale;
+import com.cda.freely.dto.user.UserDTO;
 import com.cda.freely.entity.Family;
 import com.cda.freely.entity.User;
 import com.cda.freely.exception.GlobalExceptionHandler;
@@ -12,6 +13,7 @@ import com.cda.freely.service.EmailService;
 import com.cda.freely.service.FamilyService;
 import com.cda.freely.service.auth.AuthService;
 import com.cda.freely.service.auth.ExternalApiService;
+import com.cda.freely.service.auth.RegisterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -42,6 +44,7 @@ public class AuthController {
     private EmailService emailService;
     private PasswordEncoder passwordEncoder;
     private AuthService authService;
+    private RegisterService registerService;
     private FamilyService familyService;
     private UserDetailsServiceImpl userDetailsService;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -63,7 +66,8 @@ public class AuthController {
             AuthService authService,
             FamilyService familyService,
             UserDetailsServiceImpl userDetailsService,
-            ExternalApiService externalApiService) {
+            ExternalApiService externalApiService,
+            RegisterService registerService) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.emailService = emailService;
@@ -72,6 +76,7 @@ public class AuthController {
         this.familyService = familyService;
         this.userDetailsService = userDetailsService;
         this.externalApiService = externalApiService;
+        this.registerService = registerService;
     }
 
     @GetMapping("")
@@ -125,25 +130,25 @@ public class AuthController {
                 // Autres codes d'erreur
                 switch (response.getStatusCode()) {
                     case 301:
-                        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).body("Unité légale fermée pour cause de doublon");
+                        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).body(new ErrorResponse("Unité légale fermée pour cause de doublon") );
                     case 400:
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nombre incorrect de paramètres ou les paramètres sont mal formatés");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Nombre incorrect de paramètres ou les paramètres sont mal formatés"));
                     case 401:
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Jeton d'accès manquant ou invalide");
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Jeton d'accès manquant ou invalide"));
                     case 403:
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Droits insuffisants pour consulter les données de cette unité");
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Droits insuffisants pour consulter les données de cette unité"));
                     case 404:
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entreprise non trouvée dans la base Sirene");
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Entreprise non trouvée dans la base Sirene"));
                     case 406:
-                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Le paramètre 'Accept' de l'en-tête HTTP contient une valeur non prévue");
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponse("Le paramètre 'Accept' de l'en-tête HTTP contient une valeur non prévue"));
                     case 429:
-                        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("Quota d'interrogations de l'API dépassé");
+                        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(new ErrorResponse("Quota d'interrogations de l'API dépassé"));
                     case 500:
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur");
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Erreur interne du serveur"));
                     case 503:
-                        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Service indisponible");
+                        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse("Service indisponible"));
                     default:
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Une erreur inconnue s'est produite.");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Une erreur inconnue s'est produite."));
                 }
             }
         } catch (Exception e) {
@@ -152,31 +157,18 @@ public class AuthController {
     }
 
     @PostMapping("/register/step2")
-    public ResponseEntity<?> registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         // Vérifiez si l'e-mail est déjà enregistré
         ErrorResponse errorResponse = new ErrorResponse();
         try {
-            Optional<User> ExistUser = authService.findByMail(user.getEmail());
+            Optional<User> ExistUser = registerService.findByMail(userDTO.getEmail());
             if (ExistUser.isPresent()) {
                 errorResponse.setMessage("Email already exists");
                 return ResponseEntity.badRequest().body(errorResponse);
             } else {
                 // Créez un nouvel utilisateur à partir de la demande d'enregistrement
-                Optional<Family> family = familyService.findById(user.getFamily().getId());
-                family.ifPresent(user::setFamily);
-                var newUser = User.builder()
-                        .firstName(user.getFirstName())
-                        .lastName(user.getLastName())
-                        .email(user.getEmail())
-                        .password(passwordEncoder.encode(user.getPassword()))
-                        .gender(user.getGender())
-                        .role(User.Role.ROLE_USER)
-                        .userAccountState(User.Status.PENDING)
-                        .userAvailability(User.Availability.YES)
-                        .createdAt(new Date())
-                        .family(user.getFamily())
-                        .build();
-                authService.saveUser(newUser);
+                logger.error("creation-------------------> {}", userDTO.toString());
+                User newUser = registerService.CreateUser(userDTO);
 
                 // envoyez un e-mail d'activation
                 try{
@@ -191,9 +183,10 @@ public class AuthController {
                 }
             }
         } catch (Exception e) {
-            errorResponse.setMessage(e.getMessage());
-            errorResponse.setDetails(e.getCause().getCause().getMessage());
-            return ResponseEntity.badRequest().body(errorResponse);
+//            errorResponse.setMessage(e.getMessage());
+//            errorResponse.setDetails(e.getCause().getCause().getMessage());
+//            return ResponseEntity.badRequest().body(errorResponse);
+            return new GlobalExceptionHandler().handleAllExceptions(e);
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.cda.freely.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
 @NoArgsConstructor
@@ -42,9 +45,6 @@ public class Achievement {
     @JdbcTypeCode(SqlTypes.DATE)
     private Date achieveDate;
 
-    @ManyToOne
-    @JoinColumn(name = "id_user")
-    private User user;
 
     @OneToMany(mappedBy = "achieve", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
@@ -68,16 +68,4 @@ public class Achievement {
     public void setImages(List<Image> images) {
         this.images = images;
     }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-
-
-
 }

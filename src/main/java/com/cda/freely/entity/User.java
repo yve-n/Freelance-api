@@ -1,6 +1,8 @@
 package com.cda.freely.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -11,10 +13,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import java.util.*;
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
 @NoArgsConstructor
@@ -89,27 +89,33 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "id_family")
     private Family family;
-    @OneToMany(mappedBy = "user")
-    private List<UserTag> userTags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @ManyToMany
+    @JoinTable(
+            name = "user_tag",
+            joinColumns = @JoinColumn(name = "id_user"),
+            inverseJoinColumns = @JoinColumn(name = "id_tag"))
+
+    private Set<Tag> tags = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Company> companies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Contact> contacts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Experience> experiences = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<History> histories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Service> services = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Skill> skills = new ArrayList<>();
-    @OneToMany(mappedBy = "id", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Training> trainings = new ArrayList<>();
 
     public List<Training> getTrainings() {

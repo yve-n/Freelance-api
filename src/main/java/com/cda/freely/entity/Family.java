@@ -1,6 +1,8 @@
 package com.cda.freely.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,6 +38,7 @@ public class Family {
     @OneToMany(mappedBy = "family", orphanRemoval = true)
     private List<User> users = new ArrayList<>();
 
+
     @OneToMany(mappedBy = "family", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Tag> tags = new ArrayList<>();
 
@@ -54,6 +57,7 @@ public class Family {
     public void setUsers(List<User> users) {
         this.users = users;
     }
+
 
 
 }

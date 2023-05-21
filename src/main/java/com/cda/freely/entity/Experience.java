@@ -1,5 +1,7 @@
 package com.cda.freely.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
@@ -12,6 +14,7 @@ import org.hibernate.type.SqlTypes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
 @NoArgsConstructor

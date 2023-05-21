@@ -1,5 +1,7 @@
 package com.cda.freely.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
 @NoArgsConstructor
@@ -57,7 +60,7 @@ public class Company {
     private User user;
 
 
-    @OneToMany(mappedBy = "id", orphanRemoval = true)
+    @OneToMany(mappedBy = "company", orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
     @Column(name = "company_state")

@@ -1,6 +1,8 @@
 package com.cda.freely.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,14 +13,17 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "category")
+@Table(name = "tag")
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +38,8 @@ public class Tag {
     @JoinColumn(name = "id_family")
     private Family family;
 
-    @OneToMany(mappedBy = "tag")
-    private List<UserTag> userCategories = new ArrayList<>();
+    @ManyToMany(mappedBy = "tags")
+    private Set<User> users = new HashSet<>();
 
     public Family getFamily() {
         return family;
@@ -43,6 +48,5 @@ public class Tag {
     public void setFamily(Family family) {
         this.family = family;
     }
-
 
 }
