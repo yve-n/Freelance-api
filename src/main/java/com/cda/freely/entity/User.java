@@ -1,7 +1,9 @@
 package com.cda.freely.entity;
 
+import com.cda.freely.views.Views;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
@@ -41,53 +43,66 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user", nullable = false)
+    @JsonView(Views.UserDetails.class)
     private Long id;
     @Column(name = "first_name", length = 32,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String firstName;
 
     @Column(name = "lastName", length = 32,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String lastName;
 
     @Column(name = "email", unique = true,length = 50,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String email;
 
     @Column(name = "password",nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String password;
 
     @Column(name = "profile_pic")
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String profilePic;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at",nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
+    @JsonView(Views.UserDetails.class)
     private Date createdAt;
 
     @Column(name = "role", length = 10,nullable = false)
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.UserDetails.class)
     private Role role;
 
     @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.UserDetails.class)
     private Gender gender;
 
     @Column(name = "user_account_state", nullable = false)
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.UserDetails.class)
     private Status userAccountState;
 
     @Column(name = "user_availability")
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.UserDetails.class)
     private Availability userAvailability;
 
     @Column(name = "token_number")
+    @JsonView(Views.UserDetails.class)
     private int tokenNumber;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "users"})
+
     @ManyToOne
     @JoinColumn(name = "id_family")
+    @JsonView(Views.UserDetails.class)
     private Family family;
 
     @ManyToMany
@@ -95,27 +110,28 @@ public class User {
             name = "user_tag",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_tag"))
-
+    @JsonView({Views.UserDetails.class })
     private Set<Tag> tags = new HashSet<>();
-
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @JsonView({Views.UserDetails.class })
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Company> companies = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @JsonView({Views.UserDetails.class })
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contact> contacts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @JsonView({Views.UserDetails.class })
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Experience> experiences = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @JsonView({Views.UserDetails.class })
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<History> histories = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @JsonView({Views.UserDetails.class })
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Service> services = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @JsonView({Views.UserDetails.class })
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Skill> skills = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @JsonView({Views.UserDetails.class })
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Training> trainings = new ArrayList<>();
 
     public List<Training> getTrainings() {

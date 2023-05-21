@@ -2,10 +2,7 @@ package com.cda.freely.controller.auth;
 
 import com.cda.freely.config.JwtTokenProvider;
 import com.cda.freely.config.UserDetailsServiceImpl;
-import com.cda.freely.controller.auth.externalApiData.ExternalApiResponseToJson;
-import com.cda.freely.controller.auth.externalApiData.PeriodeUniteLegale;
 import com.cda.freely.dto.user.UserDTO;
-import com.cda.freely.entity.Family;
 import com.cda.freely.entity.User;
 import com.cda.freely.exception.GlobalExceptionHandler;
 import com.cda.freely.request.SirenRequest;
@@ -14,7 +11,9 @@ import com.cda.freely.service.FamilyService;
 import com.cda.freely.service.auth.AuthService;
 import com.cda.freely.service.auth.ExternalApiService;
 import com.cda.freely.service.auth.RegisterService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.cda.freely.service.user.UserService;
+import com.cda.freely.views.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -44,6 +42,7 @@ public class AuthController {
     private EmailService emailService;
     private PasswordEncoder passwordEncoder;
     private AuthService authService;
+    private UserService userService;
     private RegisterService registerService;
     private FamilyService familyService;
     private UserDetailsServiceImpl userDetailsService;
@@ -67,7 +66,8 @@ public class AuthController {
             FamilyService familyService,
             UserDetailsServiceImpl userDetailsService,
             ExternalApiService externalApiService,
-            RegisterService registerService) {
+            RegisterService registerService,
+            UserService userService) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.emailService = emailService;
@@ -77,6 +77,7 @@ public class AuthController {
         this.userDetailsService = userDetailsService;
         this.externalApiService = externalApiService;
         this.registerService = registerService;
+        this.userService = userService;
     }
 
     @GetMapping("")
@@ -88,7 +89,7 @@ public class AuthController {
     public String test() {
         return "hello test";
     }
-
+    @JsonView({Views.UserDetailsPlus.class })
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody User user){
         logger.info("user", user);
@@ -102,6 +103,7 @@ public class AuthController {
             String jwt = tokenProvider.generateToken(authentication);
             try{
                 Optional<User> foundUser = authService.findByMail(user.getEmail());
+                logger.error("found user -----------> {}", foundUser);
                 JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse(jwt);
                 jwtAuthenticationResponse.setUser(foundUser);
                 return ResponseEntity.ok(jwtAuthenticationResponse);
@@ -156,12 +158,13 @@ public class AuthController {
         }
     }
 
+    @JsonView(Views.UserDetails.class)
     @PostMapping("/register/step2")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         // Vérifiez si l'e-mail est déjà enregistré
         ErrorResponse errorResponse = new ErrorResponse();
         try {
-            Optional<User> ExistUser = registerService.findByMail(userDTO.getEmail());
+            Optional<User> ExistUser = userService.findUserByMail(userDTO.getEmail());
             if (ExistUser.isPresent()) {
                 errorResponse.setMessage("Email already exists");
                 return ResponseEntity.badRequest().body(errorResponse);

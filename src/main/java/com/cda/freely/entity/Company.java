@@ -1,6 +1,9 @@
 package com.cda.freely.entity;
 
+import com.cda.freely.views.Views;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,42 +32,51 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_company", nullable = false)
+    @JsonView(Views.UserDetails.class)
     private Long id;
 
     @Column(name = "name", length = 50,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String name;
 
     @Column(name = "siret", unique = true, length = 20)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String siret;
 
     @Column(name = "number", length = 12,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String number;
 
     @Column(name = "logo")
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String logo;
 
     @Column(name = "tva")
     @JdbcTypeCode(SqlTypes.TINYINT)
+    @JsonView(Views.UserDetails.class)
     private Boolean tva;
 
     @Column(name = "siren", unique = true, length = 20, nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView(Views.UserDetails.class)
     private String siren;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_user",nullable = false)
     private User user;
 
-
-    @OneToMany(mappedBy = "company", orphanRemoval = true)
+    @JsonView(Views.UserDetails.class)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL ,orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
     @Column(name = "company_state")
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.UserDetails.class)
     private Status companyState;
 
 
@@ -73,6 +85,12 @@ public class Company {
     }
 
     public void setAddresses(List<Address> addresses) {
+//        if (addresses != null) {
+//            addresses.forEach(address -> address.setCompany(this));
+//        }
+//        for(Address address : addresses) {
+//            address.setCompany(this);
+//        }
         this.addresses = addresses;
     }
 
@@ -81,10 +99,7 @@ public class Company {
     }
 
     public void setUser(User id_user) {
-        this.user = user;
+        this.user = id_user;
     }
-
-
-
 
 }

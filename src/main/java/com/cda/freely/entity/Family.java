@@ -1,8 +1,10 @@
 package com.cda.freely.entity;
 
 
+import com.cda.freely.views.Views;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,22 +26,25 @@ public class Family {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_family", nullable = false)
+    @JsonView({Views.UserDetails.class, Views.UserDetailsPlus.class })
     private Long id;
 
 
     @Column(name = "name", length = 100,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView({Views.UserDetails.class, Views.UserDetailsPlus.class })
     private String name;
 
     @Column(name = "description")
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView({Views.UserDetails.class })
     private String description;
 
-    @OneToMany(mappedBy = "family", orphanRemoval = true)
+    @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> users = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "family", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @JsonView({Views.UserDetailsPlus.class })
+    @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tag> tags = new ArrayList<>();
 
     public List<Tag> getTags() {
@@ -58,6 +63,12 @@ public class Family {
         this.users = users;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Family{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

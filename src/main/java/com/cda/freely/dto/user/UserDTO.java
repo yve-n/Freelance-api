@@ -2,21 +2,35 @@ package com.cda.freely.dto.user;
 
 import com.cda.freely.dto.company.CompanyDTO;
 import com.cda.freely.entity.User;
+import com.cda.freely.views.Views;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import java.util.List;
 
 
 public class UserDTO {
     private String firstName;
+
     private String lastName;
+
     private String email;
+
     private String Password;
+
     private String profilePic;
+
     private User.Role role;
+
     private User.Gender gender;
+
     private User.Status userAccountState;
+
     private User.Availability userAvailability;
+
     private Long familyId;
+
     private List<CompanyDTO> companies;
+
     private List<Long> tagIds;
 
     public List<Long> getTagIds() {
@@ -115,4 +129,21 @@ public class UserDTO {
         this.companies = companies;
     }
 
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", Password='" + Password + '\'' +
+                ", profilePic='" + profilePic + '\'' +
+                ", role=" + role +
+                ", gender=" + gender +
+                ", userAccountState=" + userAccountState +
+                ", userAvailability=" + userAvailability +
+                ", familyId=" + familyId +
+                ", companies=" + companies +
+                ", tagIds=" + tagIds +
+                '}';
+    }
 }

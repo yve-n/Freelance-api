@@ -8,7 +8,10 @@ public class CompanyDTO {
     private String name;
     private String siren;
     private boolean tva;
+    private String number;
+
     private List<AddressDTO> addresses;
+
 
     public String getName() {
         return name;
@@ -40,5 +43,13 @@ public class CompanyDTO {
 
     public void setAddresses(List<AddressDTO> addresses) {
         this.addresses = addresses;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 }
