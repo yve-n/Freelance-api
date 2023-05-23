@@ -14,5 +14,11 @@ public class TagService {
     public TagService(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
+
+    /**
+     * find a tag in database
+     * @param id
+     * @return Tag
+     */
     public Optional<Tag> findById(Long id) {return tagRepository.findById(id);}
 }

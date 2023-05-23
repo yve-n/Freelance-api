@@ -10,9 +10,18 @@ import java.util.Optional;
 
 @Service
 public class FamilyService {
-    @Autowired
-    FamilyRepository familyRepository;
 
+    private FamilyRepository familyRepository;
+    @Autowired
+    public FamilyService(FamilyRepository familyRepository) {
+        this.familyRepository = familyRepository;
+    }
+
+    /**
+     * find a Family
+     * @param id id of the family to get
+     * @return Family
+     */
     public Optional<Family> findById(Long id) {
         return familyRepository.findById(id);
     }
