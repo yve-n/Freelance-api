@@ -5,15 +5,12 @@ import com.cda.freely.dto.company.CompanyDTO;
 import com.cda.freely.dto.user.UserDTO;
 import com.cda.freely.entity.*;
 import com.cda.freely.exception.ResourceNotFoundException;
-import com.cda.freely.service.FamilyService;
-import com.cda.freely.service.TagService;
-import com.cda.freely.service.user.UserService;
+import com.cda.freely.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,20 +21,24 @@ public class RegisterService {
     private TagService tagService;
     private UserService userService;
     private PasswordEncoder passwordEncoder;
+    private CompanyService companyService;
+    private AddressService addressService;
     private final Logger logger = LoggerFactory.getLogger(RegisterService.class);
-
     @Autowired
     public RegisterService(FamilyService familyService,
-                            PasswordEncoder passwordEncoder,
                            TagService tagService,
-                           UserService userService
-                          ) {
+                           UserService userService,
+                           PasswordEncoder passwordEncoder,
+                           CompanyService companyService,
+                           AddressService addressService)
+    {
         this.familyService = familyService;
-        this.passwordEncoder = passwordEncoder;
         this.tagService = tagService;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.companyService = companyService;
+        this.addressService = addressService;
     }
-
     public User CreateUser(UserDTO userDTO){
         logger.warn("user--+++++++++++++++++++-> {}", userDTO.toString());
 
@@ -77,7 +78,7 @@ public class RegisterService {
             company.setCompanyState(Company.Status.ACTIVE);
             logger.error("===============---********************---> {}", savedUser.toString());
             company.setUser(savedUser);
-            Company savedCompany = userService.saveCompany(company);
+            Company savedCompany = companyService.saveCompany(company);
 
             List<Address> addresses = new ArrayList<>();
             for(AddressDTO addressDto : companyDto.getAddresses()) {
@@ -88,7 +89,7 @@ public class RegisterService {
                 address.setCountry(addressDto.getCountry());
                 address.setCompany(savedCompany);
 
-                Address savedAddress = userService.saveAddress(address);
+                Address savedAddress = addressService.saveAddress(address);
                 addresses.add(savedAddress);
             }
 
