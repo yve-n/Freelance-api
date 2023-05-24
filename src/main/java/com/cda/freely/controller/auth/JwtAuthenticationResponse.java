@@ -1,6 +1,8 @@
 package com.cda.freely.controller.auth;
 
 import com.cda.freely.entity.User;
+import com.cda.freely.views.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +15,9 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JwtAuthenticationResponse {
+    @JsonView({Views.AthenticationResponse.class})
     private String accessToken;
+    @JsonView({Views.AthenticationResponse.class})
     private String tokenType = "Bearer";
 
     public Optional<User> getUser() {
@@ -24,7 +28,8 @@ public class JwtAuthenticationResponse {
         this.user = user;
     }
 
-    private Optional<User> user ;
+    @JsonView({Views.AthenticationResponse.class})
+    private Optional<User> user;
 
     public JwtAuthenticationResponse(String accessToken) {
         this.accessToken = accessToken;
