@@ -1,9 +1,10 @@
 package com.cda.freely.entity;
 
+import com.cda.freely.views.Views;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,32 +26,39 @@ public class Experience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_experience", nullable = false)
+    @JsonView({Views.User.class,Views.Experience.class,Views.Achievement.class})
     private Long id;
 
     @Column(name = "title", length = 100,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView({Views.User.class,Views.Experience.class,Views.Achievement.class})
     private String title;
 
     @Lob
     @Column(name = "description", nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView({Views.Experience.class})
     private String description;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "started_at", nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
+    @JsonView({Views.Experience.class})
     private Date startedAt;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "ended_at",nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
+    @JsonView({Views.Experience.class})
     private Date endedAt;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
+    @JsonView({Views.Experience.class})
     private User user;
 
-    @OneToMany(mappedBy = "experience", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "experience", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonView({Views.Experience.class})
     private Collection<Achievement> achievements = new ArrayList<>();
 
     public Collection<Achievement> getAchievements() {

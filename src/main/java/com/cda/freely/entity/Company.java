@@ -15,7 +15,6 @@ import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
@@ -32,51 +31,52 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_company", nullable = false)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.User.class,Views.Company.class ,Views.Address.class})
     private Long id;
 
     @Column(name = "name", length = 50,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.User.class,Views.Company.class ,Views.Address.class})
     private String name;
 
     @Column(name = "siret", unique = true, length = 20)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Company.class })
     private String siret;
 
     @Column(name = "number", length = 12,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Company.class })
     private String number;
 
     @Column(name = "logo")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Company.class })
     private String logo;
 
     @Column(name = "tva")
     @JdbcTypeCode(SqlTypes.TINYINT)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Company.class })
     private Boolean tva;
 
     @Column(name = "siren", unique = true, length = 20, nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Company.class })
     private String siren;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_user",nullable = false)
+    @JsonView({Views.Company.class })
     private User user;
 
-    @JsonView(Views.UserDetails.class)
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL ,orphanRemoval = true)
+    @JsonView({Views.Company.class, Views.User.class })
     private List<Address> addresses = new ArrayList<>();
 
     @Column(name = "company_state")
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Company.class })
     private Status companyState;
 
 

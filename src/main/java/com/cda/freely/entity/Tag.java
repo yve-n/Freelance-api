@@ -23,20 +23,20 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tag", nullable = false)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Family.class , Views.User.class, Views.Tag.class})
     private Long id;
 
     @Column(name = "name", length = 100, nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Family.class, Views.User.class,Views.Tag.class})
     private String name;
 
-    @JsonView({Views.UserDetailsPlus.class })
     @ManyToOne
     @JoinColumn(name = "id_family")
+    @JsonView({Views.Tag.class })
     private Family family;
-    @JsonIgnore
     @ManyToMany(mappedBy = "tags")
+    @JsonView({Views.Tag.class })
     private Set<User> users = new HashSet<>();
 
     public Family getFamily() {

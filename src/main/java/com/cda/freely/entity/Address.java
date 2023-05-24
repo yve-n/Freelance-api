@@ -22,33 +22,34 @@ import org.hibernate.type.SqlTypes;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Company.class,Views.Address.class ,Views.User.class})
     @Column(name = "id_address", nullable = false)
     private Long id;
 
     @Column(name = "address", length = 40, nullable = false)
-    @JsonView(Views.UserDetails.class)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView({Views.Company.class,Views.Address.class ,Views.User.class})
     private String address;
 
     @Column(name = "zip_code", length = 32, nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Address.class})
     private String zipCode;
 
     @Column(name = "city", length = 32,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Address.class })
     private String city;
 
     @Column(name = "country", length = 32,nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView(Views.UserDetails.class)
+    @JsonView({Views.Address.class })
     private String country;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_company")
+    @JsonView({Views.Address.class })
     private Company company;
 
     public Company getCompany() {
