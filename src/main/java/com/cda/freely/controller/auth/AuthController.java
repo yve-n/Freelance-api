@@ -11,9 +11,10 @@ import com.cda.freely.service.FamilyService;
 import com.cda.freely.service.auth.AuthService;
 import com.cda.freely.service.auth.ExternalApiService;
 import com.cda.freely.service.auth.RegisterService;
-import com.cda.freely.service.user.UserService;
+import com.cda.freely.service.UserService;
 import com.cda.freely.views.Views;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,20 +81,27 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @GetMapping("")
-    public String home() {
-        return "hello world";
+    @GetMapping("/{id}")
+    @JsonView({Views.User.class})
+    public ResponseEntity<?> home(@PathVariable Long id) {
+        try {
+            return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
+        }catch (Exception e){
+            return new GlobalExceptionHandler().handleAllExceptions(e);
+        }
     }
 
     @GetMapping("/test")
     public String test() {
         return "hello test";
     }
-    @JsonView({Views.UserDetailsPlus.class })
+
+
     @PostMapping("/login")
+    @JsonView({Views.AthenticationResponse.class})
     public ResponseEntity<?> authenticateUser(@RequestBody User user){
-        logger.info("user", user);
-        logger.info("Authenticating user: {}", user.getEmail(), user.getPassword());
+        logger.warn("user :::::///////////////// {}", user.toString());
+        logger.error("Authenticating user: {}", user.getEmail(), user.getPassword());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -101,9 +109,16 @@ public class AuthController {
                             user.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken(authentication);
-            try{
-                Optional<User> foundUser = authService.findByMail(user.getEmail());
-                logger.error("found user -----------> {}", foundUser);
+            try {
+                logger.info("token================ {}", jwt);
+                Optional<User> foundUser;
+                try {
+                    foundUser = authService.findByMail(user.getEmail());
+                    logger.error("found user -----------> {}");
+                } catch (Exception e) {
+                    logger.error("ERRRRRRRRRRRRRRRRRRRRRr -----------> {}", e.getMessage());
+                    throw new RuntimeException(e.getMessage());
+                }
                 JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse(jwt);
                 jwtAuthenticationResponse.setUser(foundUser);
                 return ResponseEntity.ok(jwtAuthenticationResponse);
@@ -158,7 +173,7 @@ public class AuthController {
         }
     }
 
-    @JsonView(Views.UserDetails.class)
+    @JsonView(Views.User.class)
     @PostMapping("/register/step2")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         // Vérifiez si l'e-mail est déjà enregistré
