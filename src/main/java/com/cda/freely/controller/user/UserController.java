@@ -3,7 +3,7 @@ package com.cda.freely.controller.user;
 import com.cda.freely.config.JwtTokenProvider;
 import com.cda.freely.entity.User;
 import com.cda.freely.service.auth.AuthService;
-import com.cda.freely.service.user.UserService;
+import com.cda.freely.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
