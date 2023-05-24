@@ -64,6 +64,7 @@ public class RegisterService {
                 .collect(Collectors.toSet());
 
         user.setTags(Tags);
+//        userDTO.getTagIds().forEach(tagId -> tagService.addUserToTag(tagId, user));
 
         User savedUser = userService.saveUser(user);
         logger.warn("usercreated---------------------------------> {}", savedUser.toString());
