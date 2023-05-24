@@ -26,5 +26,10 @@ public class UserService {
     public Optional<User> findUserByMail(String email){ return Optional.ofNullable(userRepository.findByEmail(email));}
     public User saveUser(User user){return userRepository.save(user);}
 
+    public User findUserById(Long id) {
+        return userRepository.findByIdWithTags(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 
 }
