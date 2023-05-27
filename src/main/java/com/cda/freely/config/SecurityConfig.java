@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/register/step2").permitAll()
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/auth/test").hasRole("ADMIN")
+                .requestMatchers("/admin").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/user").hasRole("USER")
                 .requestMatchers("/user/**").hasRole("USER")
