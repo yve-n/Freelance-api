@@ -44,22 +44,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<?> handleBadRequestException(String ex) {
-        logger.error("BadRequestException-------- {}", ex);
-        ErrorResponse errorResponse = new ErrorResponse(ex);
+    public ResponseEntity<?> handleBadRequestException(BadRequestException ex) {
+        logger.error("BadRequestException-------- {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<?> handleUserNameNotFoundException(String ex){
-        logger.error("UsernameNotFoundException-------- {}", ex);
-        ErrorResponse errorResponse = new ErrorResponse(ex);
+    public ResponseEntity<?> handleUserNameNotFoundException(UsernameNotFoundException ex){
+        logger.error("UsernameNotFoundException-------- {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return new ResponseEntity<>(errorResponse,HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<?> handleDataIntegrityViolationException(String ex) {
-        logger.error("DataIntegrityViolationException-------- {}", ex);
-        ErrorResponse errorResponse = new ErrorResponse("Could not save the data : " + ex);
+    public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        logger.error("DataIntegrityViolationException-------- {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Could not save the data : " + ex.getMessage());
         return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
     }
 

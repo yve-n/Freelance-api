@@ -1,10 +1,7 @@
 package com.cda.freely.entity;
 
 import com.cda.freely.views.Views;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +13,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
@@ -68,10 +67,12 @@ public class Company {
     @ManyToOne
     @JoinColumn(name = "id_user",nullable = false)
     @JsonView({Views.Company.class })
+    @JsonIgnoreProperties("companies")
     private User user;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL ,orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = { CascadeType.PERSIST, CascadeType.MERGE } ,orphanRemoval = true)
     @JsonView({Views.Company.class, Views.User.class })
+    @JsonIgnoreProperties("company")
     private List<Address> addresses = new ArrayList<>();
 
     @Column(name = "company_state")
@@ -93,13 +94,35 @@ public class Company {
 //        }
         this.addresses = addresses;
     }
+    public void addAddress(Address address) {
+        this.addresses.add(address);
+        if (address.getCompany() != this) {
+            address.setCompany(this);
+        }
+    }
 
     public User getUser() {
         return user;
     }
 
     public void setUser(User id_user) {
+
         this.user = id_user;
+        if (!user.getCompanies().contains(this)) {
+            user.getCompanies().add(this);
+        }
     }
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Company)) return false;
+//        Company company = (Company) o;
+//        return Objects.equals(getId(), company.getId());
+//    }
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(getId());
+//    }
 
 }

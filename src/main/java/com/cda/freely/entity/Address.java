@@ -1,10 +1,7 @@
 package com.cda.freely.entity;
 
 import com.cda.freely.views.Views;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.util.Objects;
+
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
@@ -50,6 +50,7 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "id_company")
     @JsonView({Views.Address.class })
+    @JsonIgnoreProperties("addresses")
     private Company company;
 
     public Company getCompany() {
@@ -60,4 +61,15 @@ public class Address {
         this.company = company;
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Address)) return false;
+//        Address address = (Address) o;
+//        return Objects.equals(getId(), address.getId());
+//    }
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(getId());
+//    }
 }
