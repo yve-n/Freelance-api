@@ -56,28 +56,11 @@ public class Experience {
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
-    @NotNull
     @JsonView({Views.Experience.class})
     private User user;
 
     @OneToMany(mappedBy = "experience", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({Views.Experience.class})
     private Collection<Achievement> achievements = new ArrayList<>();
-
-    public Collection<Achievement> getAchievements() {
-        return achievements;
-    }
-
-    public void setAchievements(Collection<Achievement> achievements) {
-        this.achievements = achievements;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
 }

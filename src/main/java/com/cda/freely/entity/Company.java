@@ -1,10 +1,7 @@
 package com.cda.freely.entity;
 
 import com.cda.freely.views.Views;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +13,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
@@ -70,7 +69,7 @@ public class Company {
     @JsonView({Views.Company.class })
     private User user;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL ,orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = { CascadeType.PERSIST, CascadeType.MERGE } ,orphanRemoval = true)
     @JsonView({Views.Company.class, Views.User.class })
     private List<Address> addresses = new ArrayList<>();
 
@@ -78,28 +77,5 @@ public class Company {
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Company.class })
     private Status companyState;
-
-
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<Address> addresses) {
-//        if (addresses != null) {
-//            addresses.forEach(address -> address.setCompany(this));
-//        }
-//        for(Address address : addresses) {
-//            address.setCompany(this);
-//        }
-        this.addresses = addresses;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User id_user) {
-        this.user = id_user;
-    }
 
 }

@@ -4,16 +4,18 @@ import com.cda.freely.dto.address.AddressDTO;
 import com.cda.freely.dto.company.CompanyDTO;
 import com.cda.freely.dto.user.UserDTO;
 import com.cda.freely.entity.*;
-import com.cda.freely.exception.ResourceNotFoundException;
+import com.cda.freely.exception.NotFoundException;
 import com.cda.freely.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class RegisterService {
@@ -39,8 +41,9 @@ public class RegisterService {
         this.companyService = companyService;
         this.addressService = addressService;
     }
+    @Transactional
     public User CreateUser(UserDTO userDTO){
-        logger.warn("user--+++++++++++++++++++-> {}", userDTO.toString());
+        logger.error("user--+++++++++++++++++++-> {}", userDTO.toString());
 
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
@@ -54,20 +57,16 @@ public class RegisterService {
         user.setCreatedAt(new Date());
 
         Family family = familyService.findById(userDTO.getFamilyId())
-                .orElseThrow(() -> new RuntimeException("Family not found"));
+                .orElseThrow(() -> new NotFoundException("Family not found"));
         user.setFamily(family);
 
         logger.warn("user//////////////////////> {}", family.toString());
 
-        Set<Tag> Tags = userDTO.getTagIds().stream()
-                .map(tagId -> tagService.findById(tagId).orElseThrow(() -> new ResourceNotFoundException("Tag", "id", tagId)))
-                .collect(Collectors.toSet());
-
-        user.setTags(Tags);
-//        userDTO.getTagIds().forEach(tagId -> tagService.addUserToTag(tagId, user));
+        List<Tag> tags = tagService.findTags(userDTO.getTagIds());
+        user.setTags (tags);
 
         User savedUser = userService.saveUser(user);
-        logger.warn("usercreated---------------------------------> {}", savedUser.toString());
+        logger.error("usercreated---------------------------------> {}");
 
         List<Company> companies = new ArrayList<>();
         for(CompanyDTO companyDto : userDTO.getCompanies()) {
@@ -77,9 +76,9 @@ public class RegisterService {
             company.setTva(companyDto.isTva());
             company.setNumber(companyDto.getNumber());
             company.setCompanyState(Company.Status.ACTIVE);
-            logger.error("===============---********************---> {}", savedUser.toString());
             company.setUser(savedUser);
             Company savedCompany = companyService.saveCompany(company);
+            logger.error("===============---********************---> {}");
 
             List<Address> addresses = new ArrayList<>();
             for(AddressDTO addressDto : companyDto.getAddresses()) {
@@ -92,14 +91,14 @@ public class RegisterService {
 
                 Address savedAddress = addressService.saveAddress(address);
                 addresses.add(savedAddress);
+                logger.error("===============------> {}");
             }
 
             savedCompany.setAddresses(addresses);
-           // userService.saveCompany(savedCompany);
            companies.add(savedCompany);
         }
 
         savedUser.setCompanies(companies);
-            return savedUser;
+            return userService.saveUser(savedUser);
     }
 }

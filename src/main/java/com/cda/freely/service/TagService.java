@@ -7,6 +7,7 @@ import com.cda.freely.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,6 +34,10 @@ public class TagService {
         user.getTags().add(tag);
         tagRepository.save(tag);
         userService.saveUser(user);
+    }
+
+    public List<Tag> findTags(List<Long> tagIds){
+        return tagRepository.findAllById(tagIds);
     }
 
 }

@@ -33,14 +33,4 @@ public class Image {
     @JsonView({Views.Image.class})
     private Achievement achieve;
 
-    public Achievement getAchieve() {
-        return achieve;
-    }
-
-    public void setAchieve(Achievement achieve) {
-        this.achieve = achieve;
-    }
-
-
-
 }

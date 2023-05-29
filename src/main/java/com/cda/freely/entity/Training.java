@@ -38,17 +38,7 @@ public class Training {
     private String year;
 
     @ManyToOne
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "id_user", nullable = false)
     @JsonView({Views.Training.class})
     private User user;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-
 }

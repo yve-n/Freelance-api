@@ -1,9 +1,7 @@
 package com.cda.freely.entity;
 
 import com.cda.freely.views.Views;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -74,7 +72,7 @@ public class User {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @JsonView({Views.User.class})
     private String profilePic;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at",nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
@@ -110,14 +108,14 @@ public class User {
     @JsonView({Views.User.class})
     private Family family;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "user_tag",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_tag"))
     @JsonView({Views.User.class})
-    private Set<Tag> tags = new HashSet<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tag> tags = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
     @JsonView({Views.User.class})
     private List<Company> companies = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -138,77 +136,4 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({Views.User.class})
     private List<Training> trainings = new ArrayList<>();
-
-    public List<Training> getTrainings() {
-        return trainings;
-    }
-
-    public void setTrainings(List<Training> trainings) {
-        this.trainings = trainings;
-    }
-
-    public List<Skill> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(List<Skill> skills) {
-        this.skills = skills;
-    }
-
-    public List<Service> getServices() {
-        return services;
-    }
-
-    public void setServices(List<Service> services) {
-        this.services = services;
-    }
-
-    public List<History> getHistories() {
-        return histories;
-    }
-
-    public void setHistories(List<History> histories) {
-        this.histories = histories;
-    }
-
-    public List<Experience> getExperiences() {
-        return experiences;
-    }
-
-    public void setExperiences(List<Experience> experiences) {
-        this.experiences = experiences;
-    }
-
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
-    }
-
-    public List<Company> getCompanies() {
-        return companies;
-    }
-
-    public void setCompanies(List<Company> companies) {
-        this.companies = companies;
-    }
-
-    public Family getFamily() {
-        return family;
-    }
-
-    public void setFamily(Family family) {
-        this.family = family;
-    }
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
-    }
-
-
 }

@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Data
 @Builder
@@ -35,16 +35,9 @@ public class Tag {
     @JoinColumn(name = "id_family")
     @JsonView({Views.Tag.class })
     private Family family;
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JsonView({Views.Tag.class })
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 
-    public Family getFamily() {
-        return family;
-    }
-
-    public void setFamily(Family family) {
-        this.family = family;
-    }
 
 }

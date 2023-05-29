@@ -61,19 +61,4 @@ public class Achievement {
     @JsonView({Views.Achievement.class})
     private Experience experience;
 
-    public Experience getExperience() {
-        return experience;
-    }
-
-    public void setExperience(Experience experience) {
-        this.experience = experience;
-    }
-
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
 }

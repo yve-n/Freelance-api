@@ -33,19 +33,8 @@ public class Skill {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "id_user", nullable = false)
     @JsonView({Views.Skill.class})
     private User user;
-
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-
 
 }
