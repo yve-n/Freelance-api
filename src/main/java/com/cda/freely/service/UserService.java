@@ -1,6 +1,7 @@
 package com.cda.freely.service;
 
 import com.cda.freely.entity.User;
+import com.cda.freely.exception.NotFoundException;
 import com.cda.freely.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class UserService {
 
     public User findUserById(Long id) {
         return userRepository.findByIdWithTags(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
 

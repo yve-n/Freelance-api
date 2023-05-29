@@ -47,22 +47,6 @@ public class Family {
     @JsonView({Views.Family.class })
     private List<Tag> tags = new ArrayList<>();
 
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
     @Override
     public String toString() {
         return "Family{" +
@@ -70,16 +54,5 @@ public class Family {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Family)) return false;
-        Family family = (Family) o;
-        return Objects.equals(getId(), family.getId());
-    }
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }

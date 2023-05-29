@@ -1,10 +1,7 @@
 package com.cda.freely.entity;
 
 import com.cda.freely.views.Views;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -75,7 +72,7 @@ public class User {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @JsonView({Views.User.class})
     private String profilePic;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at",nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
@@ -117,12 +114,9 @@ public class User {
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_tag"))
     @JsonView({Views.User.class})
-    @JsonIgnoreProperties("users")
     private List<Tag> tags = new ArrayList<>();
-//    private Set<Tag> tags = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
     @JsonView({Views.User.class})
-    @JsonIgnoreProperties("user")
     private List<Company> companies = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({Views.User.class})
@@ -142,24 +136,4 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView({Views.User.class})
     private List<Training> trainings = new ArrayList<>();
-
-    public void addCompany(Company company) {
-        this.companies.add(company);
-        if (company.getUser() != this) {
-            company.setUser(this);
-        }
-    }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof User)) return false;
-//        User user = (User) o;
-//        return Objects.equals(getId(), user.getId());
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(getId());
-//    }
 }

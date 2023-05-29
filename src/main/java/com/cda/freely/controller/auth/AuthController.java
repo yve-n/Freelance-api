@@ -93,11 +93,7 @@ public class AuthController {
     @GetMapping("/{id}")
     @JsonView({Views.User.class})
     public ResponseEntity<?> home(@PathVariable Long id) {
-        try {
             return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
-        }catch (Exception e){
-            return new GlobalExceptionHandler().handleAllExceptions(e);
-        }
     }
 
     @GetMapping("/test")
@@ -109,39 +105,23 @@ public class AuthController {
     @PostMapping("/login")
     @JsonView({Views.AthenticationResponse.class})
     public ResponseEntity<?> authenticateUser(@RequestBody User user){
-        logger.warn("user :::::///////////////// {}", user.toString());
         logger.error("Authenticating user: {}", user.getEmail(), user.getPassword());
-        try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             user.getEmail(),
                             user.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken(authentication);
-            try {
                 logger.info("token================ {}", jwt);
-                Optional<User> foundUser;
-                try {
-                    foundUser = authService.findByMail(user.getEmail());
+                   Optional<User> foundUser = authService.findByMail(user.getEmail());
+                   if(foundUser.isPresent()){
                     logger.error("found user -----------> {}");
-                } catch (Exception e) {
-                    logger.error("ERRRRRRRRRRRRRRRRRRRRRr -----------> {}", e.getMessage());
-                    throw new RuntimeException(e.getMessage());
-                }
-                JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse(jwt);
-                jwtAuthenticationResponse.setUser(foundUser);
-                return ResponseEntity.ok(jwtAuthenticationResponse);
-            }catch(Exception e){
-                return new GlobalExceptionHandler().handleAllExceptions(e);
-            }
-
-        } catch (Exception e) {
-            logger.error("Authentication failed for user: {}", user.getEmail(), e);
-            logger.error("error", e.getMessage());
-            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(),e.getCause().getCause().getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-
-        }
+                        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse(jwt);
+                        jwtAuthenticationResponse.setUser(foundUser);
+                        return ResponseEntity.ok(jwtAuthenticationResponse);
+                   }else{
+                       throw new NotFoundException("User Not Found");
+                   }
     }
 
     @PostMapping("/register/step1")

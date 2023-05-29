@@ -37,20 +37,7 @@ public class Tag {
     private Family family;
     @ManyToMany(mappedBy = "tags", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JsonView({Views.Tag.class })
-    @JsonIgnoreProperties("tags")
     private List<User> users = new ArrayList<>();
-//    private Set<User> users = new HashSet<>();
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof Tag)) return false;
-//        Tag tag = (Tag) o;
-//        return Objects.equals(getId(), tag.getId());
-//    }
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(getId());
-//    }
 
 }

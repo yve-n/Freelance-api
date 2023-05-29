@@ -67,62 +67,15 @@ public class Company {
     @ManyToOne
     @JoinColumn(name = "id_user",nullable = false)
     @JsonView({Views.Company.class })
-    @JsonIgnoreProperties("companies")
     private User user;
 
     @OneToMany(mappedBy = "company", cascade = { CascadeType.PERSIST, CascadeType.MERGE } ,orphanRemoval = true)
     @JsonView({Views.Company.class, Views.User.class })
-    @JsonIgnoreProperties("company")
     private List<Address> addresses = new ArrayList<>();
 
     @Column(name = "company_state")
     @Enumerated(EnumType.STRING)
     @JsonView({Views.Company.class })
     private Status companyState;
-
-
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<Address> addresses) {
-//        if (addresses != null) {
-//            addresses.forEach(address -> address.setCompany(this));
-//        }
-//        for(Address address : addresses) {
-//            address.setCompany(this);
-//        }
-        this.addresses = addresses;
-    }
-    public void addAddress(Address address) {
-        this.addresses.add(address);
-        if (address.getCompany() != this) {
-            address.setCompany(this);
-        }
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User id_user) {
-
-        this.user = id_user;
-        if (!user.getCompanies().contains(this)) {
-            user.getCompanies().add(this);
-        }
-    }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof Company)) return false;
-//        Company company = (Company) o;
-//        return Objects.equals(getId(), company.getId());
-//    }
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(getId());
-//    }
 
 }

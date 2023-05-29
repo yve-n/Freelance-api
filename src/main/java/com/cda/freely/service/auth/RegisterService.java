@@ -5,7 +5,6 @@ import com.cda.freely.dto.company.CompanyDTO;
 import com.cda.freely.dto.user.UserDTO;
 import com.cda.freely.entity.*;
 import com.cda.freely.exception.NotFoundException;
-import com.cda.freely.exception.ResourceNotFoundException;
 import com.cda.freely.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class RegisterService {
@@ -63,11 +63,9 @@ public class RegisterService {
         logger.warn("user//////////////////////> {}", family.toString());
 
         List<Tag> tags = tagService.findTags(userDTO.getTagIds());
-
         user.setTags (tags);
 
         User savedUser = userService.saveUser(user);
-
         logger.error("usercreated---------------------------------> {}");
 
         List<Company> companies = new ArrayList<>();
@@ -90,7 +88,6 @@ public class RegisterService {
                 address.setZipCode(addressDto.getZipCode());
                 address.setCountry(addressDto.getCountry());
                 address.setCompany(savedCompany);
-//                company.addAddress(address);
 
                 Address savedAddress = addressService.saveAddress(address);
                 addresses.add(savedAddress);
@@ -98,12 +95,10 @@ public class RegisterService {
             }
 
             savedCompany.setAddresses(addresses);
-           savedUser.addCompany(company);
            companies.add(savedCompany);
         }
 
         savedUser.setCompanies(companies);
-//        return savedUser;
             return userService.saveUser(savedUser);
     }
 }
