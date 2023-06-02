@@ -15,33 +15,30 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import java.util.Collections;
 
 
 @Service
 public class ExternalApiService {
-    @Autowired
     private RestTemplate restTemplate;
     @Value("${INSEE_API_URL}")
     private String inseeApiUrl;
     @Value("${INSEE_API_TOKEN}")
     private String inseeToken;
-
-    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
+    private final Logger logger = LoggerFactory.getLogger(ExternalApiService.class);
+    @Autowired
+    public ExternalApiService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
     public ApiResponse fetchCompanyInfosBySiren(String siren) throws JsonProcessingException {
         logger.info("siren===================> {}", siren);
         String token = inseeToken;
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-
         // Get today's date and format it as a string
         String dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
         String url = UriComponentsBuilder.fromHttpUrl(inseeApiUrl)
                 .pathSegment(siren) // Inclure le siren dans la requête
                 .queryParam("date", dateToday)  //queryParam est utilisée pour ajouter le paramètre de requête à l'URL
@@ -51,17 +48,13 @@ public class ExternalApiService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         ExternalApiResponseToJson externalApiResponseToJson = objectMapper.readValue(responseBody, ExternalApiResponseToJson.class);
-
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setSiren(externalApiResponseToJson.getUniteLegale().getSiren());
-
         if (!externalApiResponseToJson.getUniteLegale().getPeriodesUniteLegale().isEmpty()) {
             PeriodeUniteLegale firstPeriode = externalApiResponseToJson.getUniteLegale().getPeriodesUniteLegale().get(0);
             apiResponse.setName(firstPeriode.getDenominationUniteLegale());
         }
         apiResponse.setStatusCode(response.getStatusCodeValue());
         return apiResponse;
-
-
     }
 }

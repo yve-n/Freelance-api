@@ -52,7 +52,7 @@ public class Contact {
     private Date createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "id_user", nullable = false)
+    @JoinColumn(name = "id_user")
     @JsonView({Views.Contact.class})
     private User user;
 

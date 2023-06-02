@@ -15,9 +15,11 @@ import java.io.IOException;
  */
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AccessDeniedException exc) throws IOException {
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write("{\"message\" : \"Vous ne pouvez pas accéder à cette page\"}");
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "{\"message\" : \"Vous ne pouvez pas accéder à cette page\"} " + exc.getMessage());
     }
 }

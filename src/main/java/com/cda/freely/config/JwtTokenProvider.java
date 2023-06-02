@@ -1,17 +1,13 @@
 package com.cda.freely.config;
 
-import com.cda.freely.exception.InvalidJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-
-import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -89,21 +85,10 @@ public class JwtTokenProvider {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             return true;
-        } catch (SignatureException ex) {
-            System.out.println("Invalid JWT signature");
-            throw new InvalidJwtException("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            System.out.println("Invalid JWT token");
-            throw new InvalidJwtException("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            System.out.println("Expired JWT token");
-            throw new InvalidJwtException("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            System.out.println("Unsupported JWT token");
-            throw new InvalidJwtException("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            System.out.println("JWT claims string is empty");
-            throw new InvalidJwtException("JWT claims string is empty");
+        } catch (Exception ex) {
+            String messageError = ex.getMessage();
+            System.out.println(messageError);
+            return false;
         }
     }
 

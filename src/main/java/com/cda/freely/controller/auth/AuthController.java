@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -129,34 +130,7 @@ public class AuthController {
         try {
             logger.info("siren-------------------> {}", sirenRequest.getSiren());
             ApiResponse response = externalApiService.fetchCompanyInfosBySiren(sirenRequest.getSiren());
-            if (response.getStatusCode() == 200) {
-                // Si la réponse est 200 OK
-                return ResponseEntity.ok(response);
-            } else {
-                // Autres codes d'erreur
-                switch (response.getStatusCode()) {
-                    case 301:
-                        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).body(new ErrorResponse("Unité légale fermée pour cause de doublon") );
-                    case 400:
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Nombre incorrect de paramètres ou les paramètres sont mal formatés"));
-                    case 401:
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Jeton d'accès manquant ou invalide"));
-                    case 403:
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Droits insuffisants pour consulter les données de cette unité"));
-                    case 404:
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Entreprise non trouvée dans la base Sirene"));
-                    case 406:
-                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponse("Le paramètre 'Accept' de l'en-tête HTTP contient une valeur non prévue"));
-                    case 429:
-                        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(new ErrorResponse("Quota d'interrogations de l'API dépassé"));
-                    case 500:
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Erreur interne du serveur"));
-                    case 503:
-                        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse("Service indisponible"));
-                    default:
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Une erreur inconnue s'est produite."));
-                }
-            }
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return new GlobalExceptionHandler().handleAllExceptions(e);
         }

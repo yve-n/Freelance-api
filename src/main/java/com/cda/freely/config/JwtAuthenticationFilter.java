@@ -45,14 +45,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        long startTime = System.currentTimeMillis();
         try {
             String jwt = getJwtFromRequest(request);
-           logger.debug("JWT token from request: {}", jwt);
+            logger.debug("JWT token from request: {}", jwt);
             if (jwt != null && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromJWT(jwt);
                 UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
-
                 logger.debug("JWT token is valid for user: {}", username);
                 String roles = (String) tokenProvider.getTokenBody(jwt).get("roles");
                 List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(","))
@@ -62,19 +60,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
             } else {
                 logger.debug("JWT token is invalid for user: {}");
             }
-
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex.getMessage());
         }
-
-        filterChain.doFilter(request, response);
-        long endTime = System.currentTimeMillis();
-        logger.info("{} {} {} {} {}ms", request.getMethod(), request.getRequestURI(), response.getStatus(), request.getRemoteAddr(), endTime - startTime);
+            logger.info("{} {} {} {} {}ms", request.getMethod(), request.getRequestURI(), response.getStatus(), request.getRemoteAddr());
+            filterChain.doFilter(request, response);
     }
 }
