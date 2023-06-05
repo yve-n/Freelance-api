@@ -1,8 +1,11 @@
 package com.cda.freely.config;
 
+import com.cda.freely.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -24,6 +27,8 @@ public class JwtTokenProvider {
     private int jwtExpirationInMs;
     @Autowired
     private SecretKey secretKey;
+    private final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+
 
     /**
      *
@@ -31,8 +36,9 @@ public class JwtTokenProvider {
      * @return claims : an object containing getter and setter necessary for the token body
      */
     public Claims getTokenBody(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -73,8 +79,9 @@ public class JwtTokenProvider {
      * @return subject (userName for User)
      */
     public String getUsernameFromJWT(String token) {
-        Claims claims = Jwts.parser()
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
 
@@ -83,7 +90,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(authToken);
             return true;
         } catch (Exception ex) {
             String messageError = ex.getMessage();
@@ -108,6 +115,20 @@ public class JwtTokenProvider {
                 .get("tokenNumber")
                 .equals(userPrincipal.getTokenNumber());
         return validUser && validTokenNumber;
+    }
+
+    public String extractUserNameFromToken(String token ){
+        logger.warn("username claims ----------- {}",token);
+        if (token != null && token.startsWith("Bearer ")) {
+            String bearerToken =  token.substring(7);
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(bearerToken)
+                    .getBody();
+            return claims.getSubject();
+        }
+        return null;
     }
 
 

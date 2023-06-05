@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -66,6 +67,10 @@ public class ExperienceService {
 
     public Experience saveExperience(Experience experience){
         return experienceRepository.save(experience);
+    }
+
+    public List<Experience> getExperiences(Long id){
+        return experienceRepository.findAllByUserId(id);
     }
 
     /**

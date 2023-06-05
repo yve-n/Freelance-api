@@ -3,6 +3,7 @@ package com.cda.freely.controller.user;
 import com.cda.freely.config.JwtTokenProvider;
 import com.cda.freely.dto.experience.ExperienceDTO;
 import com.cda.freely.entity.Experience;
+import com.cda.freely.entity.User;
 import com.cda.freely.exception.*;
 import com.cda.freely.service.ExperienceService;
 import com.cda.freely.service.UserService;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user/experiences")
@@ -37,6 +40,14 @@ public class ExperienceController {
         Experience experience = experienceService.findExpById(id).orElseThrow(() -> new NotFoundException("Experience not found"));
         return ResponseEntity.ok(experience);
     }
+    @GetMapping("")
+    @JsonView({Views.Experience.class})
+    public ResponseEntity<?> getExperiences(@RequestHeader("Authorization") String bearerToken) {
+        logger.warn("bearer token ----------- {}", bearerToken);
+        User usernameExists = userService.checkUser(bearerToken);
+        List<Experience> experiences = experienceService.getExperiences(usernameExists.getId());
+        return ResponseEntity.ok(experiences);
+    }
 
     @PostMapping("")
     @JsonView({Views.Experience.class})
@@ -56,9 +67,9 @@ public class ExperienceController {
             return ResponseEntity.ok(experience);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("")
     @JsonView({Views.Experience.class})
-    public ResponseEntity<?> deleteExperience(@PathVariable Long id) {
+    public ResponseEntity<?> deleteExperience(@RequestBody Long id) {
             experienceService.deleteExpById(id);
             return ResponseEntity.ok().build();
     }
