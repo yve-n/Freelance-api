@@ -115,7 +115,7 @@ public class AuthController {
             String jwt = tokenProvider.generateToken(authentication);
                 logger.info("token================ {}", jwt);
                    Optional<User> foundUser = authService.findByMail(user.getEmail());
-                   if(foundUser.isPresent()){
+                   if(foundUser.isPresent() && foundUser.get().getUserAccountState().equals(User.Status.APPROVED)){
                     logger.error("found user -----------> {}");
                         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse(jwt);
                         jwtAuthenticationResponse.setUser(foundUser);
