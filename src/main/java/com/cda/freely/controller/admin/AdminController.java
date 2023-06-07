@@ -26,21 +26,12 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping("")
-    public String HelloAdmin(){
-        return "hello admin";
-    }
-    @GetMapping("/test")
-    public String testUser(){
-        return "hello admin test";
-    }
-
     @GetMapping("/pending_users")
     @JsonView({Views.User.class})
     public ResponseEntity<?> getPendingUsers(){
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getUsersWithPendingAccountState());
     }
-    @GetMapping("/pending_users")
+    @GetMapping("/users")
     @JsonView({Views.User.class})
     public ResponseEntity<?> getUsers(){
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getUsers());

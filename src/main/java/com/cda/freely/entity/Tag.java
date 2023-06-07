@@ -23,12 +23,12 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tag", nullable = false)
-    @JsonView({Views.Family.class , Views.User.class, Views.Tag.class})
+    @JsonView({Views.Family.class , Views.User.class, Views.Tag.class, Views.FamilyWithoutUsers.class})
     private Long id;
 
     @Column(name = "name", length = 100, nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @JsonView({Views.Family.class, Views.User.class,Views.Tag.class})
+    @JsonView({Views.Family.class, Views.User.class,Views.Tag.class, Views.FamilyWithoutUsers.class})
     private String name;
 
     @ManyToOne
