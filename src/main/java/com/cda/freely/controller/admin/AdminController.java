@@ -1,5 +1,7 @@
 package com.cda.freely.controller.admin;
 
+import com.cda.freely.entity.User;
+import com.cda.freely.service.UserService;
 import com.cda.freely.service.admin.AdminService;
 import com.cda.freely.views.Views;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -7,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 
 @RestController
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AdminController {
         private AdminService adminService;
+        private UserService userService;
     @Autowired
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, UserService userService) {
         this.adminService = adminService;
+        this.userService = userService;
     }
 
     @GetMapping("/pending_users")
@@ -36,5 +40,15 @@ public class AdminController {
     @JsonView({Views.Contact.class})
     public ResponseEntity<?> getContacts(){
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getContacts());
+    }
+
+    @PostMapping("/validate/user")
+    @JsonView({Views.Contact.class})
+    public ResponseEntity<?> validateUserAccount(@RequestBody Map<String, Long> body){
+        Long id = body.get("id");
+        User user = userService.findUserById(id);
+        user.setUserAccountState(User.Status.APPROVED);
+        User userValidated = userService.saveUser(user);
+        return ResponseEntity.status(HttpStatus.OK).body(userValidated);
     }
 }
