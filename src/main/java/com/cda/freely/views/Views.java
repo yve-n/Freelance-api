@@ -15,6 +15,7 @@ public class Views {
         public static class History{}
         public static class Contact{}
         public static class AthenticationResponse extends User{}
+        public static class FamilyWithoutUsers{}
 
 
 

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,6 +27,8 @@ public class ContactService {
     public Optional<Contact> findContactById(Long id){
         return contactRepository.findById(id);
     }
+
+    public List<Contact> findAllContacts(){return contactRepository.findAll();}
 
     /**
      * save a contact

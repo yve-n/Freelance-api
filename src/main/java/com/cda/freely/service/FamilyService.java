@@ -6,6 +6,7 @@ import com.cda.freely.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +26,8 @@ public class FamilyService {
     public Optional<Family> findById(Long id) {
         return familyRepository.findById(id);
     }
+
+    public List<Family> getFamilies(){return familyRepository.findAll();}
 
 
 }

@@ -53,13 +53,15 @@ public class SecurityConfig {
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/").permitAll()
+                .requestMatchers("/contact").permitAll()
+                .requestMatchers("/family").permitAll()
+                .requestMatchers("/family/**").permitAll()
                 .requestMatchers("/auth").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/auth/register").permitAll()
                 .requestMatchers("/auth/register/step1").permitAll()
                 .requestMatchers("/auth/register/step2").permitAll()
                 .requestMatchers("/auth/login").permitAll()
-                .requestMatchers("/auth/test").hasRole("ADMIN")
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/user").hasRole("USER")
@@ -106,7 +108,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("*")); // Autorise toutes les origines ou spécifiez une liste d'origines autorisées
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Autorise les méthodes spécifiées
         configuration.setAllowedHeaders(Arrays.asList("*")); // Autorise tous les en-têtes ou spécifiez une liste d'en-têtes autorisés
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Disposition","Content-Type","Origin", "X-Request-with", "x-access-token","Content","Accept")); // Expose les en-têtes spécifiés
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
