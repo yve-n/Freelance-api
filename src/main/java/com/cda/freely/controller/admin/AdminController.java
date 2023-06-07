@@ -35,9 +35,19 @@ public class AdminController {
         return "hello admin test";
     }
 
-    @GetMapping("/users")
+    @GetMapping("/pending_users")
+    @JsonView({Views.User.class})
+    public ResponseEntity<?> getPendingUsers(){
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getUsersWithPendingAccountState());
+    }
+    @GetMapping("/pending_users")
     @JsonView({Views.User.class})
     public ResponseEntity<?> getUsers(){
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.getUsersWithPendingAccountState());
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getUsers());
+    }
+    @GetMapping("/contacts")
+    @JsonView({Views.Contact.class})
+    public ResponseEntity<?> getContacts(){
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getContacts());
     }
 }
