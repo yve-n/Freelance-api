@@ -115,7 +115,7 @@ public class AuthController {
             String jwt = tokenProvider.generateToken(authentication);
                 logger.info("token================ {}", jwt);
                    Optional<User> foundUser = authService.findByMail(user.getEmail());
-                   if(foundUser.isPresent()){
+                   if(foundUser.isPresent() && foundUser.get().getUserAccountState().equals(User.Status.APPROVED)){
                     logger.error("found user -----------> {}");
                         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse(jwt);
                         jwtAuthenticationResponse.setUser(foundUser);
@@ -140,23 +140,16 @@ public class AuthController {
     @PostMapping("/register/step2")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         // Vérifiez si l'e-mail est déjà enregistré
-        ErrorResponse errorResponse = new ErrorResponse();
-
         boolean emailExists = userService.findUserByMail(userDTO.getEmail()).isPresent();
         if (emailExists) {
             throw new BadRequestException("Email already exists");
         }
         // Créez un nouvel utilisateur à partir de la demande d'enregistrement
         logger.error("creation-------------------> {}", userDTO.toString());
-
         User newUser = registerService.CreateUser(userDTO);
 
         // envoyez un e-mail d'activation
-            String subject = "Bienvenue sur Freely";
-            String message = "Votre compte est actuellement en attente de validation. Vous recevrez " +
-                    "un email lorsque celui ci sera validé." +
-                    newUser.getFirstName() + newUser.getEmail();
-            emailService.sendEmail(newUser.getEmail(), subject, message);
+            emailService.sendEmail(newUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
 
     }

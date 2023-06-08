@@ -1,6 +1,5 @@
 package com.cda.freely.config;
 
-import com.cda.freely.entity.User;
 import com.cda.freely.exception.CustomAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

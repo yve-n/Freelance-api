@@ -14,10 +14,16 @@ public class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendEmail(String to, String subject, String text) {
+    public void sendEmail(User user) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
+        message.setTo(user.getEmail());
+        message.setSubject("Bienvenue sur Freely");
+        String text = "Bonjour " + user.getFirstName() + ",\n\n" +
+                "Votre compte est actuellement en attente de validation. \n\n" +
+                "Vous recevrez un email lorsque celui ci sera validé. \n\n" +
+                "Nous sommes ravis de vous compter parmi les nombreux utilisateurs de Freely. \n" +
+                "Merci,\n" +
+                "Votre équipe Freely";
         message.setText(text);
         javaMailSender.send(message);
     }
@@ -25,13 +31,14 @@ public class EmailService {
     public void sendAccountActivatedEmail(User user) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
-        message.setSubject("Your account has been activated");
+        message.setSubject("Votre compte a été activé");
 
-        String text = "Dear " + user.getFirstName() + ",\n\n" +
-                "Your account has been activated by the administrator. You can now login to our application using the following link:\n\n" +
-                "http://your-application-url.com/login\n\n" +
-                "Thank you,\n" +
-                "Your application team";
+        String text = "Bonjour " + user.getFirstName() + ",\n\n" +
+                "Votre compte a été activé par un administrateur. Vous pouvez vous connecter à votre espace en cliquant sur le lien ci-dessous :\n\n" +
+                "http://localhost:4200/login\n\n" +
+                "Nous sommes ravis de vous compter parmi les nombreux utilisateurs de Freely. \n" +
+                "Merci,\n" +
+                "Votre équipe Freely";
         message.setText(text);
 
         javaMailSender.send(message);
