@@ -2,11 +2,11 @@ package com.cda.freely.controller.admin;
 
 import com.cda.freely.entity.User;
 import com.cda.freely.service.EmailService;
+import com.cda.freely.service.HistoryService;
 import com.cda.freely.service.UserService;
 import com.cda.freely.service.admin.AdminService;
 import com.cda.freely.views.Views;
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,11 +23,15 @@ public class AdminController {
         private AdminService adminService;
         private UserService userService;
         private EmailService emailService;
+        private HistoryService historyService;
+
     @Autowired
-    public AdminController(AdminService adminService, UserService userService, EmailService emailService) {
+    public AdminController(AdminService adminService, UserService userService,
+                           EmailService emailService,HistoryService historyService) {
         this.adminService = adminService;
         this.userService = userService;
         this.emailService = emailService;
+        this.historyService = historyService;
     }
 
     @GetMapping("/pending_users")
@@ -45,9 +49,13 @@ public class AdminController {
     public ResponseEntity<?> getContacts(){
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getContacts());
     }
+    @GetMapping("/histories")
+    @JsonView({Views.History.class})
+    public ResponseEntity<?> getHistories(){
+        return ResponseEntity.status(HttpStatus.OK).body(historyService.getHistories());
+    }
 
     @PostMapping("/validate/user")
-    @JsonView({Views.Contact.class})
     public ResponseEntity<?> validateUserAccount(@RequestBody Map<String, Long> body){
         Long id = body.get("id");
         User user = userService.findUserById(id);
@@ -58,4 +66,5 @@ public class AdminController {
         emailService.sendAccountActivatedEmail(userValidated);
         return ResponseEntity.status(HttpStatus.OK).body(userValidated);
     }
+
 }

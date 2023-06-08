@@ -14,11 +14,11 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.*;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
 @Table(name = "user")
 public class User {
     public enum Status {
@@ -91,7 +91,7 @@ public class User {
 
     @Column(name = "user_account_state", nullable = false)
     @Enumerated(EnumType.STRING)
-    @JsonView({Views.User.class})
+    @JsonView({Views.User.class, Views.History.class})
     private Status userAccountState;
 
     @Column(name = "user_availability")
