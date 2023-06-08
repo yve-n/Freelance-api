@@ -1,5 +1,6 @@
 package com.cda.freely.controller.admin;
 
+import com.cda.freely.entity.History;
 import com.cda.freely.entity.User;
 import com.cda.freely.service.EmailService;
 import com.cda.freely.service.HistoryService;
@@ -11,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Map;
 
 
@@ -65,6 +68,26 @@ public class AdminController {
         // envoyez un e-mail de validation
         emailService.sendAccountActivatedEmail(userValidated);
         return ResponseEntity.status(HttpStatus.OK).body(userValidated);
+    }
+
+    @PostMapping("/refuse/user")
+    @Transactional
+    public ResponseEntity<?> refuseUserAccount(@RequestBody Map<String, Long> body){
+        Long id = body.get("id");
+        User user = userService.findUserById(id);
+        user.setUserAccountState(User.Status.DECLINED);
+        User userRefused = userService.saveUser(user);
+
+        //créer un nouvel historique
+        History newHistory = new History();
+        newHistory.setCreatedAt(new Date());
+        newHistory.setDescription("problème lié à l'entreprise de l'utilisateur.");
+        newHistory.setUser(userRefused);
+        historyService.saveHistory(newHistory);
+        
+        // envoyez un e-mail de refus
+        emailService.sendAccountNotValidatedEmail(userRefused);
+        return ResponseEntity.status(HttpStatus.OK).body(userRefused);
     }
 
 }
