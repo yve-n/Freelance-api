@@ -43,4 +43,19 @@ public class EmailService {
 
         javaMailSender.send(message);
     }
+
+    public void sendAccountNotValidatedEmail(User user) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Votre compte n'a pas été validé");
+
+        String text = "Bonjour " + user.getFirstName() + ",\n\n" +
+                "Votre compte n'a pas été validé par l'administrateur. pour plus de précision, \n\n" +
+                "Vous pouvez le contacter en cliquant sur le lien ci-dessous : \n\n" +
+                "http://localhost:4200/contact\n\n" +
+                "Merci,\n" +
+                "Votre équipe Freely";
+        message.setText(text);
+        javaMailSender.send(message);
+    }
 }

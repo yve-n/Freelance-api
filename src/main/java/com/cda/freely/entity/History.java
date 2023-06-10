@@ -12,11 +12,11 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
 @Table(name = "history")
 public class History {
     @Id
@@ -34,7 +34,7 @@ public class History {
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at",nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
-    @JsonView({Views.History.class})
+    @JsonView({Views.History.class, Views.User.class})
     private Date createdAt;
 
     @ManyToOne
