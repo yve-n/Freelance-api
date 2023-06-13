@@ -23,18 +23,34 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return new ResponseEntity<>(errorResponse,HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleNotFoundException(NotFoundException ex){
+        logger.error("NotFoundException-------- {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handleBadRequestException(BadRequestException ex) {
+        logger.error("BadRequestException-------- {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        logger.error("DataIntegrityViolationException-------- {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Could not save the data : " + ex.getMessage());
+        return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
-
-
     }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return new ResponseEntity<>(errorResponse,HttpStatus.FORBIDDEN);
-
     }
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidJwtException.class)
@@ -43,31 +59,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponse,HttpStatus.UNAUTHORIZED);
 
     }
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<?> handleBadRequestException(BadRequestException ex) {
-        logger.error("BadRequestException-------- {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
-        return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
-    }
+
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<?> handleUserNameNotFoundException(UsernameNotFoundException ex){
         logger.error("UsernameNotFoundException-------- {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return new ResponseEntity<>(errorResponse,HttpStatus.NO_CONTENT);
-    }
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        logger.error("DataIntegrityViolationException-------- {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse("Could not save the data : " + ex.getMessage());
-        return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> handleNotFoundException(NotFoundException ex){
-        logger.error("NotFoundException-------- {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
-        return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
     }
 
 

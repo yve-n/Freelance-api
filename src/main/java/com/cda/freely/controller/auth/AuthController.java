@@ -137,7 +137,7 @@ public class AuthController {
     }
 
     @JsonView(Views.User.class)
-    @PostMapping("/register/step2")
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         // Vérifiez si l'e-mail est déjà enregistré
         boolean emailExists = userService.findUserByMail(userDTO.getEmail()).isPresent();
