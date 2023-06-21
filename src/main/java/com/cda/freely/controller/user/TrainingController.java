@@ -33,7 +33,6 @@ public class TrainingController {
     @JsonView({Views.Training.class})
     public ResponseEntity<?> getTraining(@RequestHeader("Authorization") String bearerToken,
                                       @PathVariable Integer id){
-        logger.warn("bearer token ---------- {}", bearerToken);
         userService.checkUser(bearerToken);
         Training training = trainingService.findTrainingById(id).orElseThrow(() -> new NotFoundException("Skill not found"));
         return ResponseEntity.status(HttpStatus.OK).body(training);
@@ -43,7 +42,6 @@ public class TrainingController {
     @GetMapping("")
     @JsonView({Views.Training.class})
     public ResponseEntity<?> getTrainings(@RequestHeader("Authorization") String bearerToken) {
-        logger.warn("bearer token ----------- {}", bearerToken);
         User usernameExists = userService.checkUser(bearerToken);
         List<Training> trainings = trainingService.getTrainings(usernameExists.getId());
         return ResponseEntity.ok(trainings);
@@ -52,12 +50,12 @@ public class TrainingController {
     @JsonView({Views.Training.class})
     public ResponseEntity<?> addTraining(@RequestHeader("Authorization") String bearerToken,
                                       @RequestBody Training training){
-        logger.warn("bearer token ---------- {}", bearerToken);
 
         User usernameExists = userService.checkUser(bearerToken);;
-        logger.info("Add a new skill-----------: {}",usernameExists);
         training.setUser(usernameExists);
         Training newTraining = trainingService.saveTraining(training);
+        usernameExists.getTrainings().add(newTraining);
+        userService.saveUser(usernameExists);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTraining);
 
     }
@@ -67,7 +65,6 @@ public class TrainingController {
     public ResponseEntity<?> editSkill(@RequestHeader("Authorization") String bearerToken,
                                        @RequestBody Training updatedTraining,
                                        @PathVariable Integer id){
-        logger.warn("bearer token ---------- {}", bearerToken);
         User usernameExists = userService.checkUser(bearerToken);;
         updatedTraining.setUser(usernameExists);
         Training newTraining = trainingService.updateTraining(updatedTraining, id);
@@ -80,7 +77,6 @@ public class TrainingController {
     public ResponseEntity<?> deleteSkill(@RequestHeader("Authorization") String bearerToken,
                                          @RequestBody Integer id){
 
-        logger.warn("bearer token ---------- {}", bearerToken);
         userService.checkUser(bearerToken);
         trainingService.deleteTrainingById(id);
         return ResponseEntity.ok().build();

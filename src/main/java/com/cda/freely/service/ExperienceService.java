@@ -1,15 +1,11 @@
 package com.cda.freely.service;
 
-import com.cda.freely.dto.experience.ExperienceDTO;
 import com.cda.freely.entity.Experience;
-import com.cda.freely.entity.User;
-import com.cda.freely.exception.GlobalExceptionHandler;
 import com.cda.freely.exception.NotFoundException;
 import com.cda.freely.repository.ExperienceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,35 +32,22 @@ public class ExperienceService {
         return experienceRepository.findById(id);
     }
 
+    public Experience updateExperience(Experience updatedExperience, Long id){
+        Experience experience = this.findExpById(id).orElseThrow(() -> new NotFoundException("Experience not found"));
+
+        experience.setTitle(updatedExperience.getTitle());
+        experience.setDescription(updatedExperience.getDescription());
+        experience.setStartedAt(updatedExperience.getStartedAt());
+        experience.setEndedAt(updatedExperience.getEndedAt());
+        experience.setUser(updatedExperience.getUser());
+        return experienceRepository.save(experience);
+    }
+
     /**
      * create an experience
-     * @param experienceDTO
+     * @param experience
      * @return Experience
      */
-    public Experience addExperience(ExperienceDTO experienceDTO){
-            User user = userService.findById(experienceDTO.getUserId())
-                    .orElseThrow(() -> new NotFoundException("User not found"));
-            Experience experience = new Experience();
-            experience.setTitle(experienceDTO.getTitle());
-            experience.setDescription(experienceDTO.getDescription());
-            experience.setStartedAt(experienceDTO.getStartedAt());
-            experience.setEndedAt(experienceDTO.getEndedAt());
-            experience.setUser(user);
-        return experienceRepository.save(experience);
-    }
-
-    public Experience updateExperience(ExperienceDTO updatedExperienceDTO, Long id){
-        Experience experience = this.findExpById(id).orElseThrow(() -> new NotFoundException("Experience not found"));
-        User user = userService.findById(updatedExperienceDTO.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        experience.setTitle(updatedExperienceDTO.getTitle());
-        experience.setDescription(updatedExperienceDTO.getDescription());
-        experience.setStartedAt(updatedExperienceDTO.getStartedAt());
-        experience.setEndedAt(updatedExperienceDTO.getEndedAt());
-        experience.setUser(user);
-        return experienceRepository.save(experience);
-    }
-
     public Experience saveExperience(Experience experience){
         return experienceRepository.save(experience);
     }
