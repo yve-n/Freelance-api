@@ -1,7 +1,5 @@
 package com.cda.freely.service.auth;
 
-import com.cda.freely.dto.address.AddressDTO;
-import com.cda.freely.dto.company.CompanyDTO;
 import com.cda.freely.dto.user.UserDTO;
 import com.cda.freely.entity.*;
 import com.cda.freely.exception.NotFoundException;
@@ -26,14 +24,14 @@ public class RegisterService {
     private CompanyService companyService;
     private AddressService addressService;
     private final Logger logger = LoggerFactory.getLogger(RegisterService.class);
+
     @Autowired
     public RegisterService(FamilyService familyService,
                            TagService tagService,
                            UserService userService,
                            PasswordEncoder passwordEncoder,
                            CompanyService companyService,
-                           AddressService addressService)
-    {
+                           AddressService addressService) {
         this.familyService = familyService;
         this.tagService = tagService;
         this.userService = userService;
@@ -41,8 +39,9 @@ public class RegisterService {
         this.companyService = companyService;
         this.addressService = addressService;
     }
+
     @Transactional
-    public User CreateUser(UserDTO userDTO){
+    public User CreateUser(UserDTO userDTO) {
         logger.error("user--+++++++++++++++++++-> {}", userDTO.toString());
 
         User user = new User();
@@ -63,42 +62,42 @@ public class RegisterService {
         logger.warn("user//////////////////////> {}", family.toString());
 
         List<Tag> tags = tagService.findTags(userDTO.getTagIds());
-        user.setTags (tags);
+        user.setTags(tags);
 
         User savedUser = userService.saveUser(user);
         logger.error("usercreated---------------------------------> {}");
 
         List<Company> companies = new ArrayList<>();
-        for(CompanyDTO companyDto : userDTO.getCompanies()) {
-            Company company = new Company();
-            company.setName(companyDto.getName());
-            company.setSiren(companyDto.getSiren());
-            company.setTva(companyDto.isTva());
-            company.setNumber(companyDto.getNumber());
-            company.setCompanyState(Company.Status.ACTIVE);
-            company.setUser(savedUser);
-            Company savedCompany = companyService.saveCompany(company);
-            logger.error("===============---********************---> {}");
 
-            List<Address> addresses = new ArrayList<>();
-            for(AddressDTO addressDto : companyDto.getAddresses()) {
-                Address address = new Address();
-                address.setAddress(addressDto.getAddress());
-                address.setCity(addressDto.getCity());
-                address.setZipCode(addressDto.getZipCode());
-                address.setCountry(addressDto.getCountry());
-                address.setCompany(savedCompany);
+        Company company = new Company();
+        company.setName(userDTO.getCompany().getName());
+        company.setSiren(userDTO.getCompany().getSiren());
+        company.setSiret(userDTO.getCompany().getSiret());
+        company.setTva(userDTO.getCompany().getTva());
+        company.setNumber(userDTO.getCompany().getNumber());
+        company.setCompanyState(Company.Status.ACTIVE);
+        company.setUser(savedUser);
+        Company savedCompany = companyService.saveCompany(company);
 
-                Address savedAddress = addressService.saveAddress(address);
-                addresses.add(savedAddress);
-                logger.error("===============------> {}");
-            }
+        companies.add(savedCompany);
+        logger.error("===============---********************---> {}");
 
-            savedCompany.setAddresses(addresses);
-           companies.add(savedCompany);
-        }
+        List<Address> addresses = new ArrayList<>();
 
+        Address address = new Address();
+        address.setAddress(userDTO.getAddress().getAddress());
+        address.setCity(userDTO.getAddress().getCity());
+        address.setZipCode(userDTO.getAddress().getZipCode());
+        address.setCountry(userDTO.getAddress().getCountry());
+        address.setCompany(savedCompany);
+
+        Address savedAddress = addressService.saveAddress(address);
+        addresses.add(savedAddress);
+        logger.error("===============------> {}");
+
+        savedCompany.setAddresses(addresses);
         savedUser.setCompanies(companies);
-            return userService.saveUser(savedUser);
+        
+        return userService.saveUser(savedUser);
     }
 }

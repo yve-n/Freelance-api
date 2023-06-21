@@ -1,10 +1,9 @@
 package com.cda.freely.controller.user;
 
 import com.cda.freely.config.JwtTokenProvider;
-import com.cda.freely.dto.experience.ExperienceDTO;
 import com.cda.freely.entity.Experience;
 import com.cda.freely.entity.User;
-import com.cda.freely.exception.*;
+import com.cda.freely.exception.NotFoundException;
 import com.cda.freely.service.ExperienceService;
 import com.cda.freely.service.UserService;
 import com.cda.freely.views.Views;
@@ -51,17 +50,25 @@ public class ExperienceController {
 
     @PostMapping("")
     @JsonView({Views.Experience.class})
-    public ResponseEntity<?> createExperience(@RequestBody ExperienceDTO experienceDTO,
+    public ResponseEntity<?> createExperience(@RequestBody Experience experience,
                                               @RequestHeader("Authorization") String bearerToken
                                               ) {
             logger.warn("bearer token ----------- {}", bearerToken);
-            Experience experience = experienceService.addExperience(experienceDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(experience);
+        User usernameExists = userService.checkUser(bearerToken);
+        experience.setUser(usernameExists);
+        Experience newExperience = experienceService.saveExperience(experience);
+        usernameExists.getExperiences().add(newExperience);
+        userService.saveUser(usernameExists);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newExperience);
     }
 
     @PutMapping("/{id}")
     @JsonView({Views.Experience.class})
-    public ResponseEntity<?> updateExperience(@RequestBody ExperienceDTO updatedExperience, @PathVariable Long id) {
+    public ResponseEntity<?> updateExperience(@RequestBody Experience updatedExperience,
+                                              @PathVariable Long id,
+                                              @RequestHeader("Authorization") String bearerToken) {
+        User usernameExists = userService.checkUser(bearerToken);
+        updatedExperience.setUser(usernameExists);
             Experience experience = experienceService.updateExperience(updatedExperience, id);
             experienceService.saveExperience(experience);
             return ResponseEntity.ok(experience);

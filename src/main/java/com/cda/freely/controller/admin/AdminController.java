@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -88,6 +89,14 @@ public class AdminController {
         // envoyez un e-mail de refus
         emailService.sendAccountNotValidatedEmail(userRefused);
         return ResponseEntity.status(HttpStatus.OK).body(userRefused);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String bearerToken) {
+       User user =  userService.checkUser(bearerToken);
+            user.setTokenNumber(user.getTokenNumber() + 1);
+            userService.saveUser(user);
+            return ResponseEntity.ok().build();
     }
 
 }

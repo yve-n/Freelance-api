@@ -1,9 +1,10 @@
 package com.cda.freely.dto.user;
 
-import com.cda.freely.dto.company.CompanyDTO;
+
+import com.cda.freely.entity.Address;
+import com.cda.freely.entity.Company;
 import com.cda.freely.entity.User;
-import com.cda.freely.views.Views;
-import com.fasterxml.jackson.annotation.JsonView;
+
 
 import java.util.List;
 
@@ -29,7 +30,24 @@ public class UserDTO {
 
     private Long familyId;
 
-    private List<CompanyDTO> companies;
+   private Company company;
+   private Address address;
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
     private List<Long> tagIds;
 
@@ -121,13 +139,7 @@ public class UserDTO {
         this.familyId = familyId;
     }
 
-    public List<CompanyDTO> getCompanies() {
-        return companies;
-    }
 
-    public void setCompanies(List<CompanyDTO> companies) {
-        this.companies = companies;
-    }
 
     @Override
     public String toString() {
@@ -142,7 +154,8 @@ public class UserDTO {
                 ", userAccountState=" + userAccountState +
                 ", userAvailability=" + userAvailability +
                 ", familyId=" + familyId +
-                ", companies=" + companies +
+                ", company=" + company.toString() +
+                ", address=" + address.toString() +
                 ", tagIds=" + tagIds +
                 '}';
     }
