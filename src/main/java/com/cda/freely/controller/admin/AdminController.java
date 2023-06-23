@@ -1,5 +1,6 @@
 package com.cda.freely.controller.admin;
 
+import com.cda.freely.controller.user.ExperienceController;
 import com.cda.freely.entity.History;
 import com.cda.freely.entity.User;
 import com.cda.freely.service.EmailService;
@@ -9,6 +10,8 @@ import com.cda.freely.service.admin.AdminService;
 import com.cda.freely.views.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,7 @@ public class AdminController {
         private UserService userService;
         private EmailService emailService;
         private HistoryService historyService;
+    private final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     public AdminController(AdminService adminService, UserService userService,
@@ -93,9 +97,11 @@ public class AdminController {
 
     @GetMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String bearerToken) {
+        logger.warn("bearer token ----------- {}", bearerToken);
        User user =  userService.checkUser(bearerToken);
             user.setTokenNumber(user.getTokenNumber() + 1);
             userService.saveUser(user);
+        logger.warn("bearer token ----------- {}", "user");
             return ResponseEntity.ok().build();
     }
 
