@@ -68,7 +68,7 @@ public class User {
     @JsonView({Views.User.class})
     private String password;
 
-    @Column(name = "portfolioLink",nullable = false)
+    @Column(name = "portfolioLink",nullable = false, unique = true)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @JsonView({Views.User.class})
     private String portfolioLink;
