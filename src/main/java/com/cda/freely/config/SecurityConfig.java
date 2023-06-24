@@ -1,9 +1,13 @@
 package com.cda.freely.config;
 
+import com.cda.freely.controller.admin.AdminController;
 import com.cda.freely.exception.CustomAccessDeniedHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -29,6 +33,8 @@ import java.util.Collections;
 public class SecurityConfig {
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
+    private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -45,16 +51,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("Security configuration loaded.");
+        logger.debug("bearer token ----------- {}", "Security configuration loaded");
+        logger.debug("bearer token ----------- {}", "Security configuration loaded");
         http
                 .cors().configurationSource(corsConfigurationSource())
-                .and()
-                .csrf()
-                .disable()
+                .and().httpBasic()
+                .and().csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/contact").permitAll()
-                .requestMatchers("/family").permitAll()
-                .requestMatchers("/family/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/family").permitAll()
+                .requestMatchers(HttpMethod.GET,"/family/all").permitAll()
+                .requestMatchers(HttpMethod.GET,"/family/**").permitAll()
                 .requestMatchers("/auth").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/auth/register").permitAll()
@@ -70,8 +79,10 @@ public class SecurityConfig {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(authenticationProvider())
+           //     .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        logger.debug("bearer token ----------- {}", "Security configuration loaded");
+        logger.debug("bearer token ----------- {}", "Security configuration loaded");
 
         return http.build();
     }

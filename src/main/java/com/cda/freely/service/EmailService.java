@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-
     private final JavaMailSender javaMailSender;
-
     public EmailService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
@@ -40,7 +38,6 @@ public class EmailService {
                 "Merci,\n" +
                 "Votre équipe Freely";
         message.setText(text);
-
         javaMailSender.send(message);
     }
 

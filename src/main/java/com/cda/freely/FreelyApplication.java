@@ -4,12 +4,15 @@ import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.TimeZone;
 
 @SpringBootApplication
 @EnableJpaAuditing     /**signale à spring l'auto-generation de la bdd*/
+@ComponentScan({ "com.cda.freely.*" })
 public class FreelyApplication {
 
 	public static void main(String[] args) {

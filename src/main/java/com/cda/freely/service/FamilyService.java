@@ -3,6 +3,8 @@ package com.cda.freely.service;
 import com.cda.freely.entity.Family;
 import com.cda.freely.repository.FamilyRepository;
 import com.cda.freely.repository.ServiceRepository;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
