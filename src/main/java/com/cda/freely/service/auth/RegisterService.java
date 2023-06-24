@@ -53,6 +53,7 @@ public class RegisterService {
         user.setRole(User.Role.ROLE_USER);
         user.setUserAccountState((User.Status.PENDING));
         user.setUserAvailability(User.Availability.YES);
+        user.setPortfolioLink(userDTO.getFirstName() + "-" + userDTO.getLastName());
         user.setCreatedAt(new Date());
 
         Family family = familyService.findById(userDTO.getFamilyId())
