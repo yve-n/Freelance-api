@@ -52,6 +52,8 @@ public class SecurityConfig {
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/").permitAll()
+                .requestMatchers("/portfolio").permitAll()
+                .requestMatchers("/portfolio/**").permitAll()
                 .requestMatchers("/contact").permitAll()
                 .requestMatchers("/family").permitAll()
                 .requestMatchers("/family/**").permitAll()

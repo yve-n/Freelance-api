@@ -18,6 +18,8 @@ public class UserDTO {
 
     private String Password;
 
+    private String portfolioLink;
+
     private String profilePic;
 
     private User.Role role;
@@ -90,6 +92,15 @@ public class UserDTO {
     public void setPassword(String password) {
         Password = password;
     }
+
+    public String getPortfolioLink() {
+        return portfolioLink;
+    }
+
+    public void setPortfolioLink(String portfolioLink) {
+        portfolioLink = portfolioLink;
+    }
+
 
     public String getProfilePic() {
         return profilePic;

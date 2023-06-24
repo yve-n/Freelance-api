@@ -29,4 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN FETCH u.tags WHERE u.id = :id")
     Optional<User> findByIdWithTags(@Param("id") Long id);
     User findByEmail(String email);
+
+    @Query("SELECT u FROM User u WHERE u.portfolioLink = :portfolioLink")
+    Optional<User> findByPortfolioLink(@Param("portfolioLink") String portfolioLink);
 }

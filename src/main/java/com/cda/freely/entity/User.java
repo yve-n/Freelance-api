@@ -68,6 +68,11 @@ public class User {
     @JsonView({Views.User.class})
     private String password;
 
+    @Column(name = "portfolioLink",nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonView({Views.User.class})
+    private String portfolioLink;
+
     @Column(name = "profile_pic")
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @JsonView({Views.User.class})
