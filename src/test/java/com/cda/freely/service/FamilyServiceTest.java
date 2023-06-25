@@ -47,22 +47,17 @@ class FamilyServiceTest {
 
         Mockito.when(this.familyRepository.findById(family.getId()))
                 .thenReturn(Optional.of(family));
-
          this.families = Arrays.asList(family);
 
         Mockito.when(this.familyRepository.findAll())
                 .thenReturn(families);
-
-
     }
     @Test
     void findById() {
         // GIVEN
         final Long id = FAMILY_ID;
-
         // WHEN
         final Optional<Family> family = this.familyService.findById(id);
-
         // THEN
         assertEquals(id,family.get().getId());
 

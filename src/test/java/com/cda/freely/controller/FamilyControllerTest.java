@@ -58,12 +58,6 @@ class FamilyControllerTest {
     private static final String FAMILY_NAME = "The Little Prince";
     private static final String FAMILY_DESCRIPTION = "The Little Prince description";
     private static final Long FAMILY_ID = 1L;
-    private static RestTemplate restTemplate;
-
-    @BeforeAll
-    public static void init(){
-        restTemplate = new RestTemplate();
-    }
 
     @BeforeEach
     void setUp() {
