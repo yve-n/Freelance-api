@@ -1,6 +1,7 @@
 package com.cda.freely.entity;
 
 import com.cda.freely.views.Views;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -46,7 +47,8 @@ public class Contact {
     private String message;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column(name = "created_at", nullable = false)
     @JdbcTypeCode(SqlTypes.DATE)
     @JsonView({Views.Contact.class})
     private Date createdAt;
